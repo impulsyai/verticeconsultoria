@@ -196,43 +196,105 @@ function initScrollAnimations() {
 function initB2BLeadForm() {
   const form = document.getElementById('b2b-lead-form');
   const successBox = document.getElementById('b2b-form-success');
+  const errorBox = document.getElementById('b2b-form-error');
+  const submitBtn = document.getElementById('b2b-submit-btn');
+  const privacyLink = document.getElementById('form-link-privacy');
   if (!form) return;
 
-  // Ingestão automática de contexto, URL e UTMs
+  // Conectar link discreto de LGPD ao modal de Diretrizes de Privacidade
+  if (privacyLink) {
+    privacyLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      const modalPrivacyTrigger = document.getElementById('btn-legal-privacy');
+      if (modalPrivacyTrigger) modalPrivacyTrigger.click();
+    });
+  }
+
+  // Ingestão automática de contexto, URL e UTMs completas
   const urlParams = new URLSearchParams(window.location.search);
   const utmSource = urlParams.get('utm_source') || '';
   const utmMedium = urlParams.get('utm_medium') || '';
   const utmCampaign = urlParams.get('utm_campaign') || '';
+  const utmContent = urlParams.get('utm_content') || '';
 
   const fieldUrl = document.getElementById('form-field-url');
   const fieldSource = document.getElementById('form-field-utm-source');
   const fieldMedium = document.getElementById('form-field-utm-medium');
   const fieldCampaign = document.getElementById('form-field-utm-campaign');
+  const fieldContent = document.getElementById('form-field-utm-content');
   const fieldTimestamp = document.getElementById('form-field-timestamp');
 
   if (fieldUrl) fieldUrl.value = window.location.href;
   if (fieldSource) fieldSource.value = utmSource;
   if (fieldMedium) fieldMedium.value = utmMedium;
   if (fieldCampaign) fieldCampaign.value = utmCampaign;
+  if (fieldContent) fieldContent.value = utmContent;
   if (fieldTimestamp) fieldTimestamp.value = new Date().toISOString();
 
-  form.addEventListener('submit', (e) => {
+  let isSubmitting = false;
+
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
+    if (errorBox) errorBox.style.display = 'none';
 
     const formData = new FormData(form);
     const payload = Object.fromEntries(formData.entries());
 
-    // Payload estruturado preparado para ingestão em CRM (ex: Frappe / Webhook / API)
-    console.info('[VÉRTICE LEAD B2B CAPTURADO]:', payload);
+    // Garantir que a URL da página atual e UTMs estejam no payload
+    payload.landing_page = window.location.href;
 
-    // Feedback visual elegante com transição suave
-    form.style.display = 'none';
-    if (successBox) {
-      successBox.classList.add('is-visible');
+    // Transição visual do botão para estado de carregamento
+    isSubmitting = true;
+    if (submitBtn) {
+      submitBtn.classList.add('is-loading');
+      submitBtn.disabled = true;
+      const btnText = submitBtn.querySelector('.btn-text');
+      if (btnText) btnText.textContent = 'ENVIANDO SOLICITAÇÃO...';
     }
 
-    // Dispara evento customizado para integrações externas (GA4, Meta Pixel, CRM)
-    window.dispatchEvent(new CustomEvent('vertice:lead_submitted', { detail: payload }));
+    try {
+      const response = await fetch('/api/lead', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (response.ok && data.success) {
+        // Confirmação real recebida do CRM
+        form.style.display = 'none';
+        if (errorBox) errorBox.style.display = 'none';
+        if (successBox) {
+          successBox.classList.add('is-visible');
+          successBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // Dispara evento customizado para integrações externas (GA4, Meta Pixel)
+        window.dispatchEvent(new CustomEvent('vertice:lead_submitted', { detail: payload }));
+      } else {
+        throw new Error(data.error || 'crm_unavailable');
+      }
+    } catch (err) {
+      console.warn('[VÉRTICE LEAD FORM] Falha no envio para o CRM:', err.message || err);
+      if (errorBox) {
+        errorBox.style.display = 'flex';
+        errorBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    } finally {
+      isSubmitting = false;
+      if (submitBtn) {
+        submitBtn.classList.remove('is-loading');
+        submitBtn.disabled = false;
+        const btnText = submitBtn.querySelector('.btn-text');
+        if (btnText) btnText.textContent = 'FALAR COM A VÉRTICE';
+      }
+    }
   });
 }
 
@@ -528,7 +590,7 @@ function initPhoneMask() {
  * 14. Feedback Tátil de Validação nos Inputs
  */
 function initFormValidationFeedback() {
-  const form = document.getElementById('lead-form');
+  const form = document.getElementById('b2b-lead-form');
   if (!form) return;
 
   const inputs = form.querySelectorAll('.b2b-input, .b2b-select');

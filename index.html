@@ -946,12 +946,18 @@
             </div>
 
             <form class="b2b-form" id="b2b-lead-form" method="POST" action="#">
+              <!-- 🛡️ Proteção Anti-Spam Honeypot (Invisível para Usuários Reais) -->
+              <div style="position: absolute; left: -9999px; top: -9999px; opacity: 0; pointer-events: none;" aria-hidden="true">
+                <input type="text" name="website_url_hp" tabindex="-1" autocomplete="off" value="">
+              </div>
+
               <!-- 🛡️ Metadados Ocultos para Ingestão em CRM / Frappe / Webhook -->
               <input type="hidden" name="source" value="site_home_v2">
               <input type="hidden" name="page_url" id="form-field-url" value="">
               <input type="hidden" name="utm_source" id="form-field-utm-source" value="">
               <input type="hidden" name="utm_medium" id="form-field-utm-medium" value="">
               <input type="hidden" name="utm_campaign" id="form-field-utm-campaign" value="">
+              <input type="hidden" name="utm_content" id="form-field-utm-content" value="">
               <input type="hidden" name="timestamp" id="form-field-timestamp" value="">
 
               <div class="b2b-form-fields">
@@ -1024,9 +1030,16 @@
                   <textarea id="lead-desafio" name="desafio" class="b2b-textarea" rows="3" placeholder="Qual o momento da sua empresa e como podemos colaborar?"></textarea>
                 </div>
 
-                <button type="submit" class="btn btn-primary b2b-submit-btn">
-                  FALAR COM A VÉRTICE <span class="arrow">→</span>
+                <button type="submit" class="btn btn-primary b2b-submit-btn" id="b2b-submit-btn">
+                  <span class="btn-text">FALAR COM A VÉRTICE</span>
+                  <span class="arrow">→</span>
                 </button>
+
+                <!-- 🔒 Aviso de Governança & LGPD -->
+                <p class="b2b-privacy-note">
+                  Seus dados corporativos são protegidos pela LGPD e utilizados unicamente para este contato.
+                  <button type="button" class="b2b-privacy-link" id="form-link-privacy">Diretrizes de Privacidade</button>.
+                </p>
               </div>
 
               <!-- Fallback Direct WhatsApp -->
@@ -1037,6 +1050,19 @@
                 </a>
               </div>
             </form>
+
+            <!-- Estado de Erro Amigável Dinâmico (Sem perder dados preenchidos) -->
+            <div class="b2b-form-error" id="b2b-form-error" style="display: none;" role="alert">
+              <div class="b2b-error-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+              </div>
+              <div class="b2b-error-content">
+                <p class="b2b-error-msg">Não foi possível enviar sua solicitação agora. Tente novamente em instantes ou fale conosco pelo WhatsApp.</p>
+                <a href="https://wa.me/5581999997566?text=Ol%C3%A1!%20Tentei%20enviar%20o%20formul%C3%A1rio%20no%20site%20da%20V%C3%A9rtice%20e%20gostaria%20de%20conversar." target="_blank" rel="noopener noreferrer" class="b2b-error-whatsapp-btn">
+                  Falar no WhatsApp agora <span class="arrow">→</span>
+                </a>
+              </div>
+            </div>
 
             <!-- Estado de Sucesso Dinâmico -->
             <div class="b2b-form-success" id="b2b-form-success">
