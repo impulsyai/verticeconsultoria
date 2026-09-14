@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dossiê Executivo de Identidade Visual & Branding (Fase 1) — Vértice × Impulsy.ai</title>
+  
+  <!-- 📌 Favicon Oficial Vértice -->
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/logos/favicon-32x32.png">
+
+  <!-- ✍️ Tipografia Oficial (Cormorant Garamond + Montserrat + Plus Jakarta Sans) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Montserrat:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --vertice-ivory: #EFE7DF;
+      --vertice-ivory-light: #F7F3EF;
+      --vertice-black: #010101;
+      --vertice-dark-card: #0C0D0E;
+      --vertice-dark-surface: #151719;
+      --vertice-dark-border: rgba(255, 255, 255, 0.09);
+      
+      --vertice-wine: #4D1021;
+      --vertice-wine-glow: #8B1E3F;
+      --vertice-wine-light: rgba(77, 16, 33, 0.2);
+      
+      --vertice-graphite: #7A7C7D;
+      --vertice-graphite-dark: #505253;
+      --vertice-gray-line: #949698;
+      
+      --text-main: #F2F4F7;
+      --text-body: #C4C9D0;
+      --text-muted: #8A929E;
+      --white: #FFFFFF;
+
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-body: 'Montserrat', sans-serif;
+      --font-tech: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-body);
+      background: #060708;
+      color: var(--text-main);
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.5;
+    }
+
+    /* === GRID TÉCNICO DE FUNDO === */
+    .bg-grid {
+      background-color: var(--vertice-dark-card);
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+
+    /* === BARRA DE AÇÃO SUPERIOR (FIXA) === */
+    .action-bar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 9999;
+      background: rgba(12, 13, 14, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--vertice-dark-border);
+      padding: 10px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .action-bar .label { 
+      font-size: 0.82rem; 
+      color: var(--text-muted); 
+      font-weight: 500; 
+      display: flex; 
+      align-items: center; 
+      gap: 8px; 
+    }
+    .action-bar .label span { 
+      color: var(--vertice-wine-glow); 
+      font-weight: 700; 
+      letter-spacing: 0.04em;
+    }
+    .action-bar-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .btn-pdf {
+      display: inline-flex; 
+      align-items: center; 
+      gap: 8px;
+      padding: 8px 20px;
+      background: var(--vertice-wine); 
+      color: var(--vertice-ivory);
+      font-weight: 700; 
+      font-size: 0.82rem;
+      border: 1px solid var(--vertice-wine-glow); 
+      border-radius: 6px; 
+      cursor: pointer;
+      font-family: var(--font-body);
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 14px rgba(77, 16, 33, 0.35);
+    }
+    .btn-pdf:hover {
+      background: var(--vertice-wine-glow);
+      transform: translateY(-1px);
+    }
+    .btn-site-link {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .btn-site-link:hover {
+      color: var(--vertice-ivory);
+    }
+
+    /* === CONTAINER DO DOCUMENTO (A4 RETRATO) === */
+    .doc-container {
+      padding-top: 64px;
+      padding-bottom: 50px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 32px;
+    }
+
+    /* Folha Padrão A4 Vertical: 210mm x 297mm */
+    .page {
+      width: 210mm;
+      height: 297mm;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--vertice-dark-card);
+      border: 1px solid var(--vertice-dark-border);
+      border-radius: 6px;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.8);
+      box-sizing: border-box;
+    }
+
+    .page-inner {
+      padding: 44px 44px 54px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* === CABEÇALHO DA PÁGINA === */
+    .page-header {
+      display: flex; 
+      align-items: flex-start; 
+      justify-content: space-between;
+      margin-bottom: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 12px;
+    }
+    .page-num { 
+      font-size: 0.65rem; 
+      font-weight: 800; 
+      letter-spacing: 2px; 
+      text-transform: uppercase; 
+      color: var(--vertice-wine-glow); 
+      margin-bottom: 4px; 
+      display: block;
+    }
+    .page-title { 
+      font-family: var(--font-display);
+      font-size: 1.95rem; 
+      font-weight: 600; 
+      color: var(--white); 
+      line-height: 1.15; 
+      letter-spacing: -0.3px; 
+    }
+    .page-title em { 
+      font-style: italic;
+      color: var(--vertice-ivory); 
+    }
+    .page-brand { 
+      font-size: 0.8rem; 
+      color: var(--white); 
+      font-weight: 800; 
+      letter-spacing: 0.5px; 
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .page-brand img {
+      height: 20px;
+      width: auto;
+    }
+    .divider { 
+      width: 36px; 
+      height: 2.5px; 
+      background: var(--vertice-wine); 
+      border-radius: 2px; 
+      margin-bottom: 18px; 
+    }
+
+    /* === RODAPÉ DA PÁGINA === */
+    .page-footer {
+      position: absolute; 
+      bottom: 18px; 
+      left: 44px; 
+      right: 44px;
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding-top: 8px;
+      font-size: 0.64rem; 
+      color: var(--text-muted); 
+      font-weight: 500;
+      letter-spacing: 0.05em;
+    }
+    .page-footer strong {
+      color: var(--vertice-ivory);
+    }
+
+    /* === CARDS & COMPONENTES DO DOSSIÊ === */
+    .card {
+      background: var(--vertice-dark-surface);
+      border: 1px solid var(--vertice-dark-border);
+      border-radius: 8px;
+      padding: 16px 18px;
+    }
+    .card-accent {
+      background: rgba(77, 16, 33, 0.12);
+      border-color: rgba(139, 30, 63, 0.35);
+    }
+    .card-title { 
+      font-size: 0.85rem; 
+      font-weight: 700; 
+      color: var(--white); 
+      margin-bottom: 6px; 
+      letter-spacing: 0.02em;
+    }
+    .card-title.accent { color: var(--vertice-wine-glow); }
+    .card-text { 
+      font-size: 0.8rem; 
+      color: var(--text-body); 
+      line-height: 1.55; 
+    }
+    .card-text strong {
+      color: var(--vertice-ivory);
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+
+    .pill { 
+      display: inline-block; 
+      padding: 4px 10px; 
+      border-radius: 4px; 
+      font-size: 0.68rem; 
+      font-weight: 700; 
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .pill-wine { 
+      background: rgba(77, 16, 33, 0.25); 
+      color: #ff99aa; 
+      border: 1px solid rgba(139, 30, 63, 0.4); 
+    }
+    .pill-ivory { 
+      background: rgba(239, 231, 223, 0.1); 
+      color: var(--vertice-ivory); 
+      border: 1px solid rgba(239, 231, 223, 0.25); 
+    }
+    .pill-gray { 
+      background: rgba(255, 255, 255, 0.06); 
+      color: var(--text-muted); 
+      border: 1px solid rgba(255, 255, 255, 0.1); 
+    }
+
+    /* === CAPA DO DOSSIÊ (PAGE 1) === */
+    .page-cover {
+      justify-content: center;
+      align-items: flex-start;
+      padding: 60px 54px;
+    }
+    .cover-top-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .cover-tag {
+      font-size: 0.68rem; 
+      font-weight: 800; 
+      letter-spacing: 2.2px; 
+      text-transform: uppercase;
+      color: var(--vertice-ivory); 
+      border: 1px solid rgba(139, 30, 63, 0.5);
+      background: var(--vertice-wine); 
+      display: inline-block;
+      padding: 6px 16px; 
+      border-radius: 4px; 
+    }
+    .cover-title {
+      font-family: var(--font-display);
+      font-size: 3.6rem; 
+      font-weight: 600; 
+      line-height: 1.05; 
+      color: var(--white); 
+      margin-bottom: 18px; 
+      letter-spacing: -0.5px;
+    }
+    .cover-title em { 
+      font-style: italic;
+      color: var(--vertice-ivory); 
+    }
+    .cover-sub { 
+      font-size: 1rem; 
+      color: var(--text-body); 
+      margin-bottom: 48px; 
+      font-weight: 400; 
+      line-height: 1.65; 
+      max-width: 520px; 
+    }
+    .cover-meta-grid { 
+      display: grid; 
+      grid-template-columns: 1fr 1fr; 
+      gap: 20px; 
+      padding-top: 28px; 
+      border-top: 1px solid var(--vertice-dark-border); 
+      width: 100%; 
+    }
+    .meta-item { display: flex; flex-direction: column; gap: 3px; }
+    .meta-label { font-size: 0.64rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); font-weight: 700; }
+    .meta-value { font-size: 0.88rem; font-weight: 700; color: var(--white); }
+    .cover-logo-img { 
+      position: absolute; 
+      top: 48px; 
+      right: 54px; 
+      height: 48px; 
+      width: auto; 
+    }
+
+    /* === RACIONAL DOS 3 TRAÇOS (PAGE 2) === */
+    .stroke-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .stroke-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 12px 14px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--vertice-dark-border);
+    }
+    .stroke-badge {
+      width: 26px;
+      height: 26px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .stroke-badge.ivory { background: var(--vertice-ivory); color: #010101; }
+    .stroke-badge.gray { background: var(--vertice-gray-line); color: #010101; }
+    .stroke-badge.wine { background: var(--vertice-wine); color: var(--vertice-ivory); border: 1px solid var(--vertice-wine-glow); }
+
+    /* === LOGOS SHOWCASE (PAGE 3) === */
+    .logo-mockup-card {
+      border-radius: 6px;
+      padding: 18px 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      border: 1px solid var(--vertice-dark-border);
+      min-height: 125px;
+    }
+    .logo-mockup-card.is-ivory {
+      background: var(--vertice-ivory);
+      color: #010101;
+      border-color: rgba(0,0,0,0.1);
+    }
+    .logo-mockup-card.is-dark {
+      background: #010101;
+      color: var(--vertice-ivory);
+      border-color: rgba(255,255,255,0.12);
+    }
+    .logo-mockup-card.is-wine {
+      background: var(--vertice-wine);
+      color: var(--vertice-ivory);
+      border-color: var(--vertice-wine-glow);
+    }
+    .logo-img-sample {
+      max-height: 48px;
+      max-width: 170px;
+      height: auto;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .logo-card-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.85;
+    }
+
+    /* === PALETA CROMÁTICA (PAGE 4) === */
+    .color-swatch-box {
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid var(--vertice-dark-border);
+      background: var(--vertice-dark-surface);
+    }
+    .swatch-fill {
+      height: 72px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+      padding: 8px;
+    }
+    .swatch-meta {
+      padding: 10px 12px;
+      font-size: 0.74rem;
+    }
+    .swatch-hex {
+      font-family: monospace;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--vertice-ivory);
+    }
+
+    /* === CARROSSEL DO INSTAGRAM (PAGE 8) === */
+    .carousel-grid-6 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .carousel-card-mini {
+      border-radius: 6px;
+      padding: 14px 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 168px;
+      border: 1px solid var(--vertice-dark-border);
+      position: relative;
+    }
+    .carousel-card-mini.theme-ivory {
+      background: var(--vertice-ivory);
+      color: #010101;
+    }
+    .carousel-card-mini.theme-dark {
+      background: #010101;
+      color: var(--vertice-ivory);
+    }
+    .carousel-card-mini.theme-wine {
+      background: var(--vertice-wine);
+      color: var(--vertice-ivory);
+    }
+    .c-top {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.55rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      opacity: 0.75;
+    }
+    .c-title {
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 600;
+      line-height: 1.15;
+      margin: auto 0;
+    }
+    .c-bottom {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.55rem;
+      opacity: 0.7;
+    }
+
+    /* === TABELAS DE DADOS === */
+    table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+    thead th {
+      text-align: left; padding: 8px 10px;
+      font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1.2px;
+      color: var(--text-muted); border-bottom: 1px solid var(--vertice-dark-border); font-weight: 700;
+    }
+    tbody td {
+      padding: 8px 10px; color: var(--text-body);
+      border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: top;
+      line-height: 1.45;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody td:first-child { color: var(--white); font-weight: 700; }
+
+    /* =====================================================
+       PRINT / PDF (STANDARD A4 PORTRAIT 210mm x 297mm)
+    ===================================================== */
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 0;
+      }
+
+      html, body {
+        width: 210mm !important;
+        height: 297mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #0C0D0E !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      .action-bar { display: none !important; }
+      .doc-container { 
+        padding: 0 !important; 
+        margin: 0 !important;
+        gap: 0 !important;
+        display: block !important;
+        width: 210mm !important;
+      }
+
+      .page {
+        width: 210mm !important;
+        height: 297mm !important;
+        max-width: 210mm !important;
+        min-height: 297mm !important;
+        max-height: 297mm !important;
+        border: none !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        overflow: hidden !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        box-sizing: border-box !important;
+      }
+
+      .page-inner { padding: 40px 40px 50px !important; }
+      .cover-title { font-size: 3.2rem !important; }
+    }
+  </style>
+</head>
+<body class="bg-grid">
+
+  <!-- ========================================================================
+       BARRA DE AÇÃO SUPERIOR (FIXA NA TELA)
+       ======================================================================== -->
+  <div class="action-bar">
+    <div class="label">
+      Dossiê de Marca &amp; Branding (Fase 1) — <span>Vértice — Pessoas &amp; Estratégia</span>
+    </div>
+    <div class="action-bar-actions">
+      <a href="index.html" target="_blank" class="btn-site-link">Visualizar Site Oficial ↗</a>
+      <button class="btn-pdf" onclick="window.print()">🖨️ Salvar como PDF (A4)</button>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       CONTAINER DO DOCUMENTO A4 PAGINADO
+       ======================================================================== -->
+  <div class="doc-container">
+
+    <!-- ===== PÁGINA 1: CAPA DO DOSSIÊ ===== -->
+    <div class="page page-cover bg-grid">
+      <img src="assets/logos/logo-negativa-cinza.png" alt="Vértice" class="cover-logo-img">
+      
+      <div class="cover-top-meta">
+        <span class="cover-tag">FASE 1 · IDENTIDADE VISUAL &amp; BRANDING</span>
+        <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; letter-spacing: 0.1em;">
+          ENTREGA HOMOLOGADA
+        </span>
+      </div>
+
+      <h1 class="cover-title">
+        VÉRTICE<br>
+        <em>Pessoas &amp; Estratégia</em>
+      </h1>
+
+      <p class="cover-sub">
+        Manual Executivo de Marca, Diretrizes Cromáticas, Tipografia Nobre, Aplicações de Logotipos, Template de Proposta Comercial, Divulgação de Vagas, Kit de Redes Sociais com Carrossel e Assinatura de E-mail Corporativa.
+      </p>
+
+      <div class="cover-meta-grid">
+        <div class="meta-item">
+          <span class="meta-label">Organização Cliente</span>
+          <span class="meta-value">Juliana Pinheiro &amp; Diretoria Executiva</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Consultoria &amp; Branding</span>
+          <span class="meta-value">Impulsy.ai — Arquitetura de Negócios</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Data de Homologação</span>
+          <span class="meta-value">Setembro de 2026 · Recife / PE</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Status do Ecossistema</span>
+          <span class="meta-value" style="color: #4ade80;">● Fase 1 Homologada &amp; Ativa</span>
+        </div>
+      </div>
+
+      <div class="page-footer">
+        <span>VÉRTICE — PESSOAS &amp; ESTRATÉGIA · CNPJ 42.090.430/0001-91</span>
+        <span>PÁGINA 01 DE 09</span>
+      </div>
+    </div>
+
+    <!-- ===== PÁGINA 2: RACIONAL & CONCEITO DA MARCA ===== -->
+    <div class="page bg-grid">
+      <div class="page-inner">
+        <div class="page-header">
+          <div>
+            <span class="page-num">PÁGINA 02 · CONCEITO &amp; POSICIONAMENTO</span>
+            <h2 class="page-title">A Arquitetura da Marca <em>Vértice</em></h2>
+          </div>
+          <div class="page-brand">
+            <img src="assets/logos/symbol-negativa-cinza.png" alt="V">
+            <span>VÉRTICE</span>
+          </div>
+        </div>
+        <div class="divider"></div>
+
+        <div class="grid-2" style="margin-bottom: 16px;">
+          <div class="card card-accent">
+            <div class="card-title accent">A Transição Estratégica</div>
+            <p class="card-text">
+              A evolução de <strong>JP Consultoria</strong> para <strong>VÉRTICE — Pessoas &amp; Estratégia</strong> marca o reposicionamento definitivo de uma consultoria técnica de RH para uma <strong>banca consultiva de alta governança</strong>, orientada a conselhos, CEOs e diretores de médias e grandes empresas.
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="card-title">O Significado do Nome</div>
+            <p class="card-text">
+              <strong>Vértice</strong> é o ponto geométrico de convergência onde duas retas se encontram. No negócio, representa o exato ponto de alinhamento onde o <strong>capital humano</strong> e as <strong>metas financeiras</strong> da corporação se tornam uma única força motriz.
+            </p>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 16px;">
+          <div class="card-title" style="margin-bottom: 10px;">A Tríade dos Três Traços do Símbolo "V"</div>
+          <div class="stroke-list">
+            <div class="stroke-item">
+              <div class="stroke-badge ivory">I</div>
+              <div>
+                <strong style="font-size: 0.82rem; color: var(--white); display: block;">Haste Esquerda (Cor Ivory #EFE7DF) — O Diagnóstico &amp; Fundação</strong>
+                <p style="font-size: 0.76rem; color: var(--text-body); line-height: 1.45;">
+                  Representa a solidez técnica, a escuta atenta da cultura organizacional e o diagnóstico profundo da maturidade da empresa cliente.
+                </p>
+              </div>
+            </div>
+
+            <div class="stroke-item">
+              <div class="stroke-badge gray">II</div>
+              <div>
+                <strong style="font-size: 0.82rem; color: var(--white); display: block;">Traço Intermediário (Cor Cinza Grafite #949698) — A Convergência</strong>
+                <p style="font-size: 0.76rem; color: var(--text-body); line-height: 1.45;">
+                  O elo de sustentação central que conecta a liderança, as equipes e a estratégia de longo prazo do conselho. Destacado em cinza no fundo escuro para perfeita visibilidade.
+                </p>
+              </div>
+            </div>
+
+            <div class="stroke-item">
+              <div class="stroke-badge wine">III</div>
+              <div>
+                <strong style="font-size: 0.82rem; color: var(--white); display: block;">Haste Direita (Cor Vinho de Assinatura #4D1021) — O Futuro &amp; Elevação</strong>
+                <p style="font-size: 0.76rem; color: var(--text-body); line-height: 1.45;">
+                  O vetor ascendente apontado para o alto, simbolizando crescimento de margem, retenção de talentos-chave, sucessão e perenidade corporativa.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-title" style="font-size: 0.78rem;">Rigor Humano</div>
+            <p class="card-text" style="font-size: 0.74rem;">Decisões sobre pessoas baseadas em dados, método e previsibilidade.</p>
+          </div>
+          <div class="card">
+            <div class="card-title" style="font-size: 0.78rem;">Governança B2B</div>
+            <p class="card-text" style="font-size: 0.74rem;">Interlocução sênior com acionistas, conselhos de família e C-Level.</p>
+          </div>
+          <div class="card">
+            <div class="card-title" style="font-size: 0.78rem;">Perenidade</div>
+            <p class="card-text" style="font-size: 0.74rem;">12 anos construindo relações que continuam e geram valor sustentável.</p>
+          </div>
+        </div>
+
+        <div class="page-footer">
+          <span>VÉRTICE — PESSOAS &amp; ESTRATÉGIA · DOSSIÊ EXECUTIVO</span>
+          <span>PÁGINA 02 DE 09</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PÁGINA 3: SISTEMA DE LOGOTIPOS & REGRAS MANDATÓRIAS ===== -->
+    <div class="page bg-grid">
+      <div class="page-inner">
+        <div class="page-header">
+          <div>
+            <span class="page-num">PÁGINA 03 · SISTEMA DE LOGOTIPOS</span>
+            <h2 class="page-title">Aplicações Oficiais &amp; <em>Conformidade</em></h2>
+          </div>
+          <div class="page-brand">
+            <img src="assets/logos/symbol-negativa-cinza.png" alt="V">
+            <span>VÉRTICE</span>
+          </div>
+        </div>
+        <div class="divider"></div>
+
+        <div class="grid-2" style="margin-bottom: 14px;">
+          <!-- Card 1: Logo Principal Clara -->
+          <div class="logo-mockup-card is-ivory">
+            <img src="assets/logos/LOGO sem fundo.png" alt="Logo Principal Clara" class="logo-img-sample">
+            <div class="logo-card-label" style="color: #010101;">1. Versão Principal sobre Fundo Ivory (#EFE7DF)</div>
+            <span style="font-size: 0.65rem; color: #505253; margin-top: 2px;">Papéis, website oficial e documentos institucionais claros</span>
+          </div>
+
+          <!-- Card 2: Logo Negativa com Traço Cinza -->
+          <div class="logo-mockup-card is-dark">
+            <img src="assets/logos/logo-negativa-cinza.png" alt="Logo Negativa com Traço Cinza" class="logo-img-sample">
+            <div class="logo-card-label" style="color: var(--vertice-ivory);">2. Versão Negativa com Linha Cinza (#949698)</div>
+            <span style="font-size: 0.65rem; color: var(--vertice-graphite); margin-top: 2px;">Fundo Preto Profundo (#010101) e superfícies escuras</span>
+          </div>
+
+          <!-- Card 3: Variante Vinho -->
+          <div class="logo-mockup-card is-wine">
+            <img src="assets/logos/logo-negativa-branca.png" alt="Variante Vinho" class="logo-img-sample">
+            <div class="logo-card-label" style="color: var(--vertice-ivory);">3. Variante sobre Vinho Institucional (#4D1021)</div>
+            <span style="font-size: 0.65rem; color: rgba(239,231,223,0.7); margin-top: 2px;">Capas de relatórios solenes e eventos de liderança</span>
+          </div>
+
+          <!-- Card 4: Símbolo Isolado -->
+          <div class="logo-mockup-card is-dark">
+            <img src="assets/logos/symbol-negativa-cinza.png" alt="Símbolo V Isolado" style="max-height: 48px; width: auto; margin-bottom: 8px;">
+            <div class="logo-card-label" style="color: var(--vertice-ivory);">4. Símbolo V Isolado (Ícone Trilinear)</div>
+            <span style="font-size: 0.65rem; color: var(--vertice-graphite); margin-top: 2px;">Favicon, avatar de redes sociais e chancelas de autenticidade</span>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card" style="border-left: 3px solid #2ECC71;">
+            <div class="card-title" style="color: #2ECC71; font-size: 0.78rem;">✓ Diretrizes Obrigatórias de Uso</div>
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 0.74rem; color: var(--text-body);">
+              <li>• Utilizar exclusivamente os arquivos PNG transparentes de alta resolução do kit;</li>
+              <li>• Preservar a área de não-interferência mínima igual à altura da letra "V";</li>
+              <li>• Na versão escura, manter o traço intermediário em cinza para diferenciar os 3 traços;</li>
+              <li>• Redução mínima legível: 120px de largura para digital ou 28mm para impresso.</li>
+            </ul>
+          </div>
+
+          <div class="card" style="border-left: 3px solid #E74C3C;">
+            <div class="card-title" style="color: #E74C3C; font-size: 0.78rem;">✕ Proibições Estritas de Marca</div>
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 0.74rem; color: var(--text-body);">
+              <li>• É expressamente proibido reconstruir a logo por código (CSS, Canvas ou SVG genérico);</li>
+              <li>• Nunca alterar proporções, espessuras ou disposição do símbolo e lettering;</li>
+              <li>• Nunca aplicar sombras pesadas, bisel, contornos luminosos ou efeitos 3D;</li>
+              <li>• Não posicionar a marca sobre fotos visualmente poluídas sem contraste adequado.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="page-footer">
+          <span>VÉRTICE — PESSOAS &amp; ESTRATÉGIA · DOSSIÊ EXECUTIVO</span>
+          <span>PÁGINA 03 DE 09</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PÁGINA 4: PALETA CROMÁTICA & PROPORÇÃO ÁUREA ===== -->
+    <div class="page bg-grid">
+      <div class="page-inner">
+        <div class="page-header">
+          <div>
+            <span class="page-num">PÁGINA 04 · CROMATISMO INSTITUCIONAL</span>
+            <h2 class="page-title">Paleta de Cores &amp; <em>Proporção Áurea</em></h2>
+          </div>
+          <div class="page-brand">
+            <img src="assets/logos/symbol-negativa-cinza.png" alt="V">
+            <span>VÉRTICE</span>
+          </div>
+        </div>
+        <div class="divider"></div>
+
+        <div class="grid-4" style="margin-bottom: 16px;">
+          <!-- Cor 1: Ivory -->
+          <div class="color-swatch-box">
+            <div class="swatch-fill" style="background: var(--vertice-ivory);">
+              <span class="pill pill-ivory" style="color: #010101; background: #ffffff;">70% ESPAÇO</span>
+            </div>
+            <div class="swatch-meta">
+              <strong style="color: var(--white); font-size: 0.8rem; display: block;">Ivory Institucional</strong>
+              <div class="swatch-hex">#EFE7DF</div>
+              <p style="font-size: 0.68rem; color: var(--text-muted); margin-top: 4px;">Fundo principal. Calor humano e amplitude editorial.</p>
+            </div>
+          </div>
+
+          <!-- Cor 2: Preto Profundo -->
+          <div class="color-swatch-box">
+            <div class="swatch-fill" style="background: var(--vertice-black); border-bottom: 1px solid rgba(255,255,255,0.1);">
+              <span class="pill pill-gray">20% CONTRASTE</span>
+            </div>
+            <div class="swatch-meta">
+              <strong style="color: var(--white); font-size: 0.8rem; display: block;">Preto Profundo</strong>
+              <div class="swatch-hex">#010101</div>
+              <p style="font-size: 0.68rem; color: var(--text-muted); margin-top: 4px;">Tipografia de leitura, autoridade e contrastes nobres.</p>
+            </div>
+          </div>
+
+          <!-- Cor 3: Grafite -->
+          <div class="color-swatch-box">
+            <div class="swatch-fill" style="background: var(--vertice-graphite-dark);">
+              <span class="pill pill-gray">APOIO</span>
+            </div>
+            <div class="swatch-meta">
+              <strong style="color: var(--white); font-size: 0.8rem; display: block;">Grafite Corporativo</strong>
+              <div class="swatch-hex">#505253</div>
+              <p style="font-size: 0.68rem; color: var(--text-muted); margin-top: 4px;">Linhas divisórias, metadados e textos secundários.</p>
+            </div>
+          </div>
+
+          <!-- Cor 4: Vinho de Assinatura -->
+          <div class="color-swatch-box">
+            <div class="swatch-fill" style="background: var(--vertice-wine); border: 1px solid var(--vertice-wine-glow);">
+              <span class="pill pill-wine">10% ACENTO</span>
+            </div>
+            <div class="swatch-meta">
+              <strong style="color: var(--white); font-size: 0.8rem; display: block;">Vinho Vértice</strong>
+              <div class="swatch-hex">#4D1021</div>
+              <p style="font-size: 0.68rem; color: var(--text-muted); margin-top: 4px;">Assinatura de prestígio, selos e botões de conversão.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Barra da Proporção Áurea -->
+        <div class="card" style="margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <span class="card-title" style="margin: 0;">Equilíbrio Espacial Áureo (70 / 20 / 10)</span>
+            <span class="pill pill-ivory">WCAG AAA COMPLIANT</span>
+          </div>
+          <div style="height: 22px; border-radius: 4px; overflow: hidden; display: flex; border: 1px solid var(--vertice-dark-border); margin-bottom: 10px;">
+            <div style="width: 70%; background: var(--vertice-ivory); color: #010101; font-size: 0.65rem; font-weight: 800; display: flex; align-items: center; justify-content: center;">70% IVORY (RESPIRAÇÃO &amp; FUNDO)</div>
+            <div style="width: 20%; background: #010101; color: var(--vertice-ivory); font-size: 0.65rem; font-weight: 800; display: flex; align-items: center; justify-content: center; border-left: 1px solid rgba(255,255,255,0.2);">20% PRETO</div>
+            <div style="width: 10%; background: var(--vertice-wine); color: var(--vertice-ivory); font-size: 0.65rem; font-weight: 800; display: flex; align-items: center; justify-content: center; border-left: 1px solid var(--vertice-wine-glow);">10% VINHO</div>
+          </div>
+          <p class="card-text" style="font-size: 0.74rem;">
+            <strong>Regra de Ouro Cromática:</strong> O Vinho (#4D1021) é uma joia de assinatura e nunca deve sufocar a composição. Seu valor reside na precisão cirúrgica de aplicação sobre a base quente Ivory.
+          </p>
+        </div>
+
+        <!-- Tabela Técnica de Cores -->
+        <div class="card">
+          <div class="card-title" style="font-size: 0.8rem; margin-bottom: 8px;">Especificações Técnicas para Impressão &amp; Digital</div>
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Hexadecimal</th>
+                <th>RGB</th>
+                <th>CMYK Aproximado</th>
+                <th>Papel no Ecossistema</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Ivory</td>
+                <td>#EFE7DF</td>
+                <td>239, 231, 223</td>
+                <td>0, 3, 7, 6</td>
+                <td>Fundo principal, cartões executivos e respiro editorial</td>
+              </tr>
+              <tr>
+                <td>Preto Profundo</td>
+                <td>#010101</td>
+                <td>1, 1, 1</td>
+                <td>0, 0, 0, 100</td>
+                <td>Títulos, corpo de texto, bordas de cards e autoridade</td>
+              </tr>
+              <tr>
+                <td>Cinza Grafite</td>
+                <td>#949698 / #505253</td>
+                <td>148, 150, 152</td>
+                <td>2, 1, 0, 40</td>
+                <td>Traço intermediário da logo sobre escuro e divisores</td>
+              </tr>
+              <tr>
+                <td>Vinho Vértice</td>
+                <td>#4D1021</td>
+                <td>77, 16, 33</td>
+                <td>0, 79, 57, 70</td>
+                <td>Haste direita ascendente, botões de ação e selos</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="page-footer">
+          <span>VÉRTICE — PESSOAS &amp; ESTRATÉGIA · DOSSIÊ EXECUTIVO</span>
+          <span>PÁGINA 04 DE 09</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PÁGINA 5: SISTEMA TIPOGRÁFICO EDITORIAL ===== -->
+    <div class="page bg-grid">
+      <div class="page-inner">
+        <div class="page-header">
+          <div>
+            <span class="page-num">PÁGINA 05 · VOZ TIPOGRÁFICA</span>
+            <h2 class="page-title">Sistema Tipográfico <em>Editorial</em></h2>
+          </div>
+          <div class="page-brand">
+            <img src="assets/logos/symbol-negativa-cinza.png" alt="V">
+            <span>VÉRTICE</span>
+          </div>
+        </div>
+        <div class="divider"></div>
+
+        <div class="grid-2" style="margin-bottom: 14px;">
+          <div class="card">
+            <span class="pill pill-wine" style="margin-bottom: 8px;">FONTE DISPLAY / EDITORIAL</span>
+            <div style="font-family: var(--font-display); font-size: 1.8rem; font-weight: 600; color: var(--white); line-height: 1.1; margin-bottom: 6px;">
+              Cormorant Garamond
+            </div>
+            <p class="card-text" style="font-size: 0.74rem; margin-bottom: 10px;">
+              Serifada de corte editorial nobre. Transmite tradição acadêmica, peso intelectual e governança corporativa.
+            </p>
+            <div style="font-family: var(--font-display); font-size: 2rem; color: var(--vertice-ivory); margin-bottom: 8px;">
+              Aa Bb Cc Dd Ee 0123 &amp;
+            </div>
+            <div style="display: flex; gap: 6px;">
+              <span class="pill pill-ivory">500 Medium</span>
+              <span class="pill pill-ivory">600 SemiBold</span>
+              <span class="pill pill-ivory" style="font-style: italic;">Italic Nobre</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <span class="pill pill-gray" style="margin-bottom: 8px;">FONTE DE CORPO &amp; INTERFACE</span>
+            <div style="font-family: var(--font-body); font-size: 1.5rem; font-weight: 700; color: var(--white); line-height: 1.1; margin-bottom: 6px;">
+              Montserrat
+            </div>
+            <p class="card-text" style="font-size: 0.74rem; margin-bottom: 10px;">
+              Sans-serif geométrica moderna. Utilizada para leitura contínua, tabelas, menus de UI, números e dados de propostas.
+            </p>
+            <div style="font-family: var(--font-body); font-size: 1.6rem; font-weight: 600; color: var(--vertice-ivory); margin-bottom: 8px;">
+              Aa Bb Cc Dd Ee 0123 &amp;
+            </div>
+            <div style="display: flex; gap: 6px;">
+              <span class="pill pill-gray">400 Regular</span>
+              <span class="pill pill-gray">500 Medium</span>
+              <span class="pill pill-gray">600 SemiBold</span>
+              <span class="pill pill-gray">700 Bold</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title" style="font-size: 0.82rem; margin-bottom: 8px;">Hierarquia Tipográfica do Ecossistema</div>
+          <table>
+            <thead>
+              <tr>
+                <th>Elemento</th>
+                <th>Família</th>
+                <th>Peso &amp; Tamanho</th>
+                <th>Entrelinha &amp; Kerning</th>
+                <th>Aplicação Prática</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Display / Hero</td>
+                <td>Cormorant</td>
+                <td>500 Medium · 64–72px</td>
+                <td>line-height: 1.05 | -0.02em</td>
+                <td>Capa de apresentações e abertura do site</td>
+              </tr>
+              <tr>
+                <td>H1 Institucional</td>
+                <td>Cormorant</td>
+                <td>600 SemiBold · 48–56px</td>
+                <td>line-height: 1.12 | -0.015em</td>
+                <td>Títulos de seções principais e propostas</td>
+              </tr>
+              <tr>
+                <td>H2 de Bloco</td>
+                <td>Cormorant</td>
+                <td>500 Medium · 32–38px</td>
+                <td>line-height: 1.20 | 0.0em</td>
+                <td>Capítulos, subtítulos e cases executivos</td>
+              </tr>
+              <tr>
+                <td>Body Large</td>
+                <td>Montserrat</td>
+                <td>500 Medium · 18px</td>
+                <td>line-height: 1.60 | 0.0em</td>
+                <td>Lead de artigos e parágrafos de introdução</td>
+              </tr>
+              <tr>
+                <td>Body Text</td>
+                <td>Montserrat</td>
+                <td>400 Regular · 15–16px</td>
+                <td>line-height: 1.70 | 0.0em</td>
+                <td>Corpo de texto corrido em relatórios e contratos</td>
+              </tr>
+              <tr>
+                <td>Eyebrow / Kicker</td>
+                <td>Montserrat</td>
+                <td>700 Bold · 11–12px</td>
+                <td>line-height: 1.0 | +0.22em</td>
+                <td>Rotulagem uppercase com espaçamento amplo</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="page-footer">
+          <span>VÉRTICE — PESSOAS &amp; ESTRATÉGIA · DOSSIÊ EXECUTIVO</span>
+          <span>PÁGINA 05 DE 09</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PÁGINA 6: TEMPLATE DE PROPOSTA COMERCIAL B2B ===== -->
+    <div class="page bg-grid">
+      <div class="page-inner">
+        <div class="page-header">
+          <div>
+            <span class="page-num">PÁGINA 06 · COMERCIAL &amp; GOVERNANÇA</span>
+            <h2 class="page-title">Template de Proposta Comercial <em>A4</em></h2>
+          </div>
+          <div class="page-brand">
+            <img src="assets/logos/symbol-negativa-cinza.png" alt="V">
+            <span>VÉRTICE</span>
+          </div>
+        </div>
+        <div class="divider"></div>
+
+        <!-- Miniatura da Proposta Comercial Real -->
+        <div style="background: #ffffff; color: #010101; border-radius: 6px; padding: 22px 24px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.5);">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1.5px solid #010101; padding-bottom: 12px; margin-bottom: 16px;">
+            <img src="assets/logos/LOGO sem fundo.png" alt="Vértice" style="height: 24px; width: auto;">
+            <div style="text-align: right; font-size: 0.65rem; color: #505253; line-height: 1.4;">
+              <span>PROPOSTA EXECUTIVA · REF 2026/042</span><br>
+              <strong style="color: #4D1021;">ESTRITAMENTE CONFIDENCIAL</strong>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 16px;">
+            <span style="font-size: 0.65rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #4D1021; display: block; margin-bottom: 4px;">
+              PROJETO DE GOVERNANÇA &amp; DESENVOLVIMENTO DE LIDERANÇAS
+            </span>
+            <div style="font-family: var(--font-display); font-size: 1.35rem; font-weight: 600; line-height: 1.15; color: #010101; margin-bottom: 6px;">
+              Alinhamento de Diretoria, Sucessão e Redesenho de Papéis
+            </div>
+            <p style="font-size: 0.72rem; color: #505253; line-height: 1.45;">
+              Preparado para: <strong>Grupo Industrial Cliente S.A.</strong> · A/C Diretoria Executiva &amp; Conselho de Administração.
+            </p>
+          </div>
+
+          <!-- Tabela C.O.R.E. na proposta -->
+          <table style="margin-bottom: 14px; font-size: 0.7rem;">
+            <thead>
+              <tr style="border-bottom: 1.5px solid #010101; background: #EFE7DF;">
+                <th style="padding: 6px 8px; color: #010101;">Pilar</th>
+                <th style="padding: 6px 8px; color: #010101;">Escopo de Intervenção Técnica</th>
+                <th style="padding: 6px 8px; color: #010101;">Entregável Chave</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 6px 8px; color: #4D1021; font-weight: 800;">C · Cultura</td>
+                <td style="padding: 6px 8px; color: #333;">Diagnóstico de maturidade executiva e escuta profunda</td>
+                <td style="padding: 6px 8px; color: #333;">Matriz de Clima &amp; Riscos de Turnover</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 6px 8px; color: #4D1021; font-weight: 800;">O · Organização</td>
+                <td style="padding: 6px 8px; color: #333;">Estruturação de alçadas, matriz RACI e governança de RH</td>
+                <td style="padding: 6px 8px; color: #333;">Arquitetura de Cargos de 1º Escalão</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 6px 8px; color: #4D1021; font-weight: 800;">R · Resultados</td>
+                <td style="padding: 6px 8px; color: #333;">Formação de líderes operacionais e metas individuais</td>
+                <td style="padding: 6px 8px; color: #333;">Painel de Indicadores de Gestão (KPIs)</td>
+              </tr>
+              <tr>
+                <td style="padding: 6px 8px; color: #4D1021; font-weight: 800;">E · Evolução</td>
+                <td style="padding: 6px 8px; color: #333;">Acompanhamento assistido e sustentação comitê 90d</td>
+                <td style="padding: 6px 8px; color: #333;">Relatório de Impacto e Sucessão</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div style="display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px solid #eee; padding-top: 10px;">
+            <div>
+              <div style="font-family: var(--font-display); font-size: 0.95rem; font-weight: 600; color: #010101;">Juliana Pinheiro</div>
+              <div style="font-size: 0.65rem; color: #505253;">Sócia-Fundadora &amp; Diretora de Estratégia · Vértice</div>
+            </div>
+            <div style="font-size: 0.65rem; color: #4D1021; font-weight: 700; letter-spacing: 0.08em;">
+              CHANCELA DE GOVERNANÇA VÉRTICE
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title" style="font-size: 0.78rem;">Padrão Editorial de Proposta</div>
+            <p class="card-text" style="font-size: 0.72rem;">
+              Formatada para leitura de conselheiros e diretores. Rejeita tabelas genéricas de SaaS e adota estética de banca executiva com termos jurídicos (NDA) integrados.
+            </p>
+          </div>
+          <div class="card">
+            <div class="card-title" style="font-size: 0.78rem;">Cláusula de Sigilo Bilateral</div>
+            <p class="card-text" style="font-size: 0.72rem;">
+              Todas as propostas contam com salvaguarda jurídica irrevogável sobre organogramas, planos de sucessão e dados estratégicos das empresas clientes.
+            </p>
+          </div>
+        </div>
+
+        <div class="page-footer">
+          <span>VÉRTICE — PESSOAS &amp; ESTRATÉGIA · DOSSIÊ EXECUTIVO</span>
+          <span>PÁGINA 06 DE 09</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PÁGINA 7: ARTE DE DIVULGAÇÃO DE VAGAS EXECUTIVAS ===== -->
+    <div class="page bg-grid">
+      <div class="page-inner">
+        <div class="page-header">
+          <div>
+            <span class="page-num">PÁGINA 07 · RECRUTAMENTO &amp; SELEÇÃO</span>
+            <h2 class="page-title">Arte de Divulgação de Vagas <em>Executivas</em></h2>
+          </div>
+          <div class="page-brand">
+            <img src="assets/logos/symbol-negativa-cinza.png" alt="V">
+            <span>VÉRTICE</span>
+          </div>
+        </div>
+        <div class="divider"></div>
+
+        <div class="grid-2" style="margin-bottom: 14px;">
+          <!-- Card de Vaga Fundo Ivory -->
+          <div style="background: var(--vertice-ivory); color: #010101; border-radius: 6px; padding: 22px 18px; border: 1px solid rgba(0,0,0,0.1); height: 260px; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                <img src="assets/logos/LOGO sem fundo.png" alt="Logo" style="height: 18px; width: auto;">
+                <span class="pill" style="background: rgba(77,16,33,0.1); color: #4D1021; border: 1px solid rgba(77,16,33,0.3); font-size: 0.6rem;">PROCESSO CONFIDENCIAL</span>
+              </div>
+              <span style="font-size: 0.62rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #4D1021; display: block; margin-bottom: 4px;">OPORTUNIDADE EXECUTIVA</span>
+              <div style="font-family: var(--font-display); font-size: 1.35rem; font-weight: 600; line-height: 1.15; margin-bottom: 8px;">
+                Diretor de Operações Industriais
+              </div>
+              <div style="font-size: 0.68rem; color: #505253; margin-bottom: 10px;">
+                📍 Recife / PE · Grande Indústria · Reporte ao CEO
+              </div>
+              <ul style="list-style: none; font-size: 0.68rem; color: #333; display: flex; flex-direction: column; gap: 4px;">
+                <li>→ Liderança de equipes industriais com mais de 350 profissionais;</li>
+                <li>→ Domínio comprovado de lean manufacturing e manutenção preditiva;</li>
+                <li>→ Pacote de remuneração sênior + PLR agressiva por metas.</li>
+              </ul>
+            </div>
+            <div style="border-top: 1px solid rgba(0,0,0,0.1); padding-top: 8px; display: flex; justify-content: space-between; font-size: 0.62rem; color: #505253;">
+              <span>Envio confidencial: <strong>vagas@verticeestrategia.com.br</strong></span>
+              <span style="font-weight: 700; color: #4D1021;">REF: 2026/OPS-01</span>
+            </div>
+          </div>
+
+          <!-- Card de Vaga Fundo Escuro -->
+          <div style="background: #010101; color: var(--vertice-ivory); border-radius: 6px; padding: 22px 18px; border: 1px solid rgba(255,255,255,0.12); height: 260px; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                <img src="assets/logos/logo-negativa-cinza.png" alt="Logo" style="height: 18px; width: auto;">
+                <span class="pill" style="background: rgba(139,30,63,0.3); color: #ff99aa; border: 1px solid rgba(255,153,170,0.4); font-size: 0.6rem;">PROCESSO CONFIDENCIAL</span>
+              </div>
+              <span style="font-size: 0.62rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #f7aab7; display: block; margin-bottom: 4px;">HUNTING EXECUTIVO</span>
+              <div style="font-family: var(--font-display); font-size: 1.35rem; font-weight: 600; line-height: 1.15; margin-bottom: 8px;">
+                Head de Gente &amp; Gestão (C-Level)
+              </div>
+              <div style="font-size: 0.68rem; color: var(--vertice-graphite); margin-bottom: 10px;">
+                📍 Atuação Híbrida · Médio/Grande Porte · Alinhamento ao Conselho
+              </div>
+              <ul style="list-style: none; font-size: 0.68rem; color: var(--text-body); display: flex; flex-direction: column; gap: 4px;">
+                <li>→ Estruturação de governança corporativa e sucessão familiar;</li>
+                <li>→ Implementação de avaliação por competências e matriz RACI;</li>
+                <li>→ Salário competitivo de diretoria + bônus de performance.</li>
+              </ul>
+            </div>
+            <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px; display: flex; justify-content: space-between; font-size: 0.62rem; color: var(--text-muted);">
+              <span>Envio confidencial: <strong>vagas@verticeestrategia.com.br</strong></span>
+              <span style="font-weight: 700; color: var(--vertice-ivory);">REF: 2026/RH-02</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title" style="font-size: 0.8rem; margin-bottom: 6px;">Protocolo de Discrição &amp; Autoridade em Recrutamento</div>
+          <p class="card-text" style="font-size: 0.74rem; line-height: 1.5;">
+            Ao contrário de vagas operacionais de bancos de emprego, as contratações da Vértice atingem líderes que atualmente ocupam posições ativas em outras empresas. O visual sóbrio, a ausência de elementos informais e a ênfase na confidencialidade transmitem a segurança necessária para candidaturas espontâneas de alto escalão.
+          </p>
+        </div>
+
+        <div class="page-footer">
+          <span>VÉRTICE — PESSOAS &amp; ESTRATÉGIA · DOSSIÊ EXECUTIVO</span>
+          <span>PÁGINA 07 DE 09</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PÁGINA 8: KIT DE REDES SOCIAIS & CARROSSEL DO INSTAGRAM ===== -->
+    <div class="page bg-grid">
+      <div class="page-inner">
+        <div class="page-header">
+          <div>
+            <span class="page-num">PÁGINA 08 · CONTEÚDO &amp; REDES SOCIAIS</span>
+            <h2 class="page-title">Carrossel Editorial <em>(1080×1350)</em></h2>
+          </div>
+          <div class="page-brand">
+            <img src="assets/logos/symbol-negativa-cinza.png" alt="V">
+            <span>VÉRTICE</span>
+          </div>
+        </div>
+        <div class="divider"></div>
+
+        <div style="font-size: 0.76rem; color: var(--vertice-ivory); margin-bottom: 10px; display: flex; justify-content: space-between;">
+          <span>Tema: <strong>"Por que 68% dos planos estratégicos falham na transição de liderança?"</strong></span>
+          <span style="color: var(--vertice-wine-glow); font-weight: 700;">6 SLIDES EDITORIAIS (RITMO ALTERNADO)</span>
+        </div>
+
+        <!-- Galeria dos 6 Slides do Carrossel -->
+        <div class="carousel-grid-6">
+          <!-- Slide 1 -->
+          <div class="carousel-card-mini theme-ivory">
+            <div class="c-top">
+              <span>VÉRTICE INSIGHTS</span>
+              <span>01/06</span>
+            </div>
+            <div class="c-title" style="font-size: 0.88rem;">
+              Por que 68% dos planos estratégicos falham na transição de liderança?
+            </div>
+            <div class="c-bottom">
+              <span>@vertice.estrategia</span>
+              <span>ARRASTE →</span>
+            </div>
+          </div>
+
+          <!-- Slide 2 -->
+          <div class="carousel-card-mini theme-dark">
+            <div class="c-top">
+              <span>O DADO OCULTO</span>
+              <span>02/06</span>
+            </div>
+            <div style="margin: auto 0;">
+              <div style="font-family: var(--font-display); font-size: 2.2rem; font-weight: 700; color: var(--vertice-wine-glow); line-height: 1;">68%</div>
+              <div class="c-title" style="font-size: 0.82rem; margin-top: 4px;">das falhas ocorrem no vácuo de liderança.</div>
+            </div>
+            <div class="c-bottom">
+              <span>HARVARD B. REVIEW</span>
+              <span>CONTINUE →</span>
+            </div>
+          </div>
+
+          <!-- Slide 3 -->
+          <div class="carousel-card-mini theme-ivory">
+            <div class="c-top">
+              <span>O SINTOMA</span>
+              <span>03/06</span>
+            </div>
+            <div class="c-title" style="font-size: 0.85rem;">
+              Metas claras não compensam lideranças desalinhadas com a cultura.
+            </div>
+            <div class="c-bottom">
+              <span>DIAGNÓSTICO VÉRTICE</span>
+              <span>COMO RESOLVER →</span>
+            </div>
+          </div>
+
+          <!-- Slide 4 -->
+          <div class="carousel-card-mini theme-wine">
+            <div class="c-top">
+              <span>MÉTODO C.O.R.E.™</span>
+              <span>04/06</span>
+            </div>
+            <div class="c-title" style="font-size: 0.8rem; line-height: 1.35;">
+              C · Cultura &amp; Diagnóstico<br>
+              O · Organização &amp; Papéis<br>
+              R · Resultados &amp; KPIs<br>
+              E · Evolução &amp; Sucessão
+            </div>
+            <div class="c-bottom">
+              <span>FRAMEWORK EXCLUSIVO</span>
+              <span>O IMPACTO →</span>
+            </div>
+          </div>
+
+          <!-- Slide 5 -->
+          <div class="carousel-card-mini theme-ivory">
+            <div class="c-top">
+              <span>EVIDÊNCIA REAL</span>
+              <span>05/06</span>
+            </div>
+            <div class="c-title" style="font-size: 0.85rem;">
+              +40% de retenção no 1º escalão com redesenho de alçadas em indústria.
+            </div>
+            <div class="c-bottom">
+              <span>CASE PETRIBU</span>
+              <span>FINALIZAR →</span>
+            </div>
+          </div>
+
+          <!-- Slide 6 -->
+          <div class="carousel-card-mini theme-dark">
+            <div class="c-top">
+              <span>PRÓXIMO PASSO</span>
+              <span>06/06</span>
+            </div>
+            <div style="text-align: center; margin: auto 0;">
+              <img src="assets/logos/symbol-negativa-cinza.png" alt="V" style="height: 24px; margin: 0 auto 6px; display: block;">
+              <div class="c-title" style="font-size: 0.8rem;">Sua liderança está pronta para o próximo ciclo?</div>
+            </div>
+            <div class="c-bottom">
+              <span>@vertice.estrategia</span>
+              <span>LINK NA BIO</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Banner LinkedIn -->
+        <div class="card" style="margin-top: 14px; padding: 14px 18px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <span style="font-size: 0.65rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--vertice-wine-glow); display: block; margin-bottom: 2px;">
+                BANNER LINKEDIN COMPANY PAGE (1584 × 396 PX)
+              </span>
+              <div style="font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; color: var(--white);">
+                VÉRTICE — Pessoas conectadas à estratégia do negócio.
+              </div>
+            </div>
+            <img src="assets/logos/logo-negativa-cinza.png" alt="Vértice" style="height: 22px; width: auto;">
+          </div>
+        </div>
+
+        <div class="page-footer">
+          <span>VÉRTICE — PESSOAS &amp; ESTRATÉGIA · DOSSIÊ EXECUTIVO</span>
+          <span>PÁGINA 08 DE 09</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PÁGINA 9: ASSINATURA DE E-MAIL & TERMO DE HOMOLOGAÇÃO ===== -->
+    <div class="page bg-grid">
+      <div class="page-inner">
+        <div class="page-header">
+          <div>
+            <span class="page-num">PÁGINA 09 · COMUNICAÇÃO &amp; HOMOLOGAÇÃO</span>
+            <h2 class="page-title">Assinatura de E-mail &amp; <em>Homologação</em></h2>
+          </div>
+          <div class="page-brand">
+            <img src="assets/logos/symbol-negativa-cinza.png" alt="V">
+            <span>VÉRTICE</span>
+          </div>
+        </div>
+        <div class="divider"></div>
+
+        <!-- Box da Assinatura Real -->
+        <div class="card" style="background: #ffffff; color: #010101; padding: 20px; border-radius: 6px; margin-bottom: 14px;">
+          <span style="font-size: 0.65rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #4D1021; display: block; margin-bottom: 12px;">
+            ASSINATURA CORPORATIVA OFICIAL (TABELA HTML NATIVA)
+          </span>
+
+          <table cellpadding="0" cellspacing="0" border="0" style="font-family: 'Montserrat', Arial, sans-serif; font-size: 12px; color: #111111; line-height: 1.4; border-collapse: collapse;">
+            <tr>
+              <td valign="middle" style="padding-right: 16px; width: 70px;">
+                <img src="assets/images/team/juliana-pinheiro.webp" alt="Juliana Pinheiro" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; display: block; border: 2px solid #4D1021;">
+              </td>
+              <td style="border-left: 2px solid #4D1021; padding-left: 16px;" valign="middle">
+                <div style="font-family: 'Cormorant Garamond', Georgia, serif; font-size: 18px; font-weight: 600; color: #010101; line-height: 1.1; margin-bottom: 2px;">
+                  Juliana Pinheiro
+                </div>
+                <div style="font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #4D1021; margin-bottom: 6px;">
+                  Sócia-Fundadora &amp; Diretora de Estratégia
+                </div>
+                <div style="font-size: 10.5px; color: #555555; line-height: 1.45;">
+                  <span>📞 (81) 99999-7566 &nbsp;|&nbsp; ✉️ juliana@verticeestrategia.com.br</span><br>
+                  <span>🌐 verticeestrategia.com.br &nbsp;|&nbsp; 📍 Recife / PE · Atuação Nacional</span>
+                </div>
+                <div style="margin-top: 8px;">
+                  <img src="assets/logos/LOGO sem fundo.png" alt="Vértice — Pessoas &amp; Estratégia" style="height: 16px; width: auto; display: block;">
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2" style="padding-top: 10px;">
+                <div style="font-size: 8.5px; color: #999999; line-height: 1.35; max-width: 500px; border-top: 1px solid #eeeeee; padding-top: 6px;">
+                  <strong>CONFIDENCIALIDADE &amp; LGPD:</strong> Esta mensagem é confidencial e protegida pela Lei nº 13.709/2018 (LGPD).
+                </div>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Termo de Homologação da Fase 1 -->
+        <div class="card card-accent" style="margin-bottom: 12px;">
+          <div class="card-title accent" style="font-size: 0.82rem;">Termo de Entrega &amp; Homologação da Fase 1</div>
+          <p class="card-text" style="font-size: 0.74rem; line-height: 1.5; margin-bottom: 12px;">
+            Atestamos que os ativos e especificações contidos neste dossiê constituem a entrega integral da <strong>Fase 1 (Identidade Visual &amp; Branding)</strong> do projeto de estruturação institucional da <strong>Vértice — Pessoas &amp; Estratégia</strong>. O sistema atende rigorosamente aos padrões de excelência visual, consistência técnica e conformidade para aplicação web e impressa.
+          </p>
+          <div class="grid-2" style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px;">
+            <div>
+              <span style="font-size: 0.65rem; color: var(--text-muted); display: block;">Pela Contratante:</span>
+              <strong style="font-size: 0.78rem; color: var(--white);">Vértice Pessoas &amp; Estratégia Ltda.</strong><br>
+              <span style="font-size: 0.68rem; color: var(--text-body);">Juliana Pinheiro · Sócia-Fundadora</span>
+            </div>
+            <div>
+              <span style="font-size: 0.65rem; color: var(--text-muted); display: block;">Pela Consultoria:</span>
+              <strong style="font-size: 0.78rem; color: var(--white);">Impulsy.ai — Business Operating System</strong><br>
+              <span style="font-size: 0.68rem; color: var(--text-body);">Equipe de Engenharia &amp; Design Editorial</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align: center; padding: 6px 0; font-size: 0.68rem; color: var(--text-muted);">
+          Recife / PE · Setembro de 2026 · Versão V1.0 Oficial
+        </div>
+
+        <div class="page-footer">
+          <span>VÉRTICE — PESSOAS &amp; ESTRATÉGIA · DOSSIÊ EXECUTIVO</span>
+          <span>PÁGINA 09 DE 09</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

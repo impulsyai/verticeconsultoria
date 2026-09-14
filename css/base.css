@@ -1,0 +1,254 @@
+/* ==========================================================================
+   VÉRTICE — BASE & TYPOGRAPHY (base.css)
+   ========================================================================== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* 🎯 Âncora com Compensação do Header Fixo */
+section[id] {
+  scroll-margin-top: 84px;
+}
+
+/* 📄 Textura de Papel Sutil (Editorial) */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  opacity: 0.025;
+  z-index: 99999;
+  background-image: radial-gradient(#010101 0.75px, transparent 0.75px);
+  background-size: 14px 14px;
+}
+
+/* 🖋️ Seleção de Texto */
+::selection {
+  background-color: var(--vertice-wine);
+  color: var(--vertice-ivory);
+}
+
+/* 🔗 Links Básicos */
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-editorial), opacity var(--duration-fast) var(--ease-editorial);
+}
+
+/* 📐 Container Padrão */
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--container-padding);
+  padding-right: var(--container-padding);
+  position: relative;
+}
+
+/* ✍️ Tipografia Global */
+h1, h2, h3, .font-display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  color: var(--text-primary);
+  letter-spacing: -0.015em;
+}
+
+h1 {
+  font-size: clamp(3rem, 5.8vw, 5.25rem);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: clamp(2.35rem, 4.2vw, 3.6rem);
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+}
+
+h3 {
+  font-size: clamp(1.65rem, 2.5vw, 2.35rem);
+  line-height: 1.2;
+}
+
+h4 {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: clamp(1.15rem, 1.4vw, 1.35rem);
+  line-height: 1.35;
+}
+
+p {
+  color: var(--text-secondary);
+  font-weight: 400;
+  font-size: 1.02rem;
+  line-height: 1.72;
+}
+
+.body-large {
+  font-size: clamp(1.1rem, 1.3vw, 1.25rem);
+  line-height: 1.68;
+}
+
+
+/* 🎨 Utilitários de Cor de Texto */
+.text-wine {
+  color: var(--vertice-wine) !important;
+}
+
+.text-wine-light {
+  color: var(--vertice-wine-light) !important;
+}
+
+.text-ivory {
+  color: var(--vertice-ivory) !important;
+}
+
+.text-black {
+  color: var(--vertice-black) !important;
+}
+
+.text-graphite {
+  color: var(--vertice-graphite) !important;
+}
+
+/* 🏷️ Eyebrow Editorial */
+.eyebrow-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.eyebrow-line {
+  display: inline-block;
+  height: 1px;
+  width: 54px;
+  background-color: var(--vertice-wine);
+  opacity: 0.7;
+}
+
+.eyebrow-on-wine {
+  color: rgba(239, 231, 223, 0.75);
+}
+
+.eyebrow-on-wine .eyebrow-line {
+  background-color: rgba(239, 231, 223, 0.4);
+}
+
+.eyebrow-on-dark {
+  color: rgba(239, 231, 223, 0.75);
+}
+
+.eyebrow-on-dark .eyebrow-line {
+  background-color: var(--vertice-wine-light);
+}
+
+/* 🔘 Acessibilidade & Foco */
+:focus-visible {
+  outline: 2px solid var(--vertice-wine);
+  outline-offset: 3px;
+}
+
+/* 📐 VIEWPORT-DRIVEN SECTION ARCHITECTURE (V2) */
+.section-viewport {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  padding-top: var(--section-py-md);
+  padding-bottom: var(--section-py-md);
+  box-sizing: border-box;
+}
+
+/* ⚡ EDITORIAL MOTION SYSTEM (Sutil, Sedoso & Sem Bounce) */
+.reveal-init {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity var(--duration-normal) var(--ease-editorial),
+              transform var(--duration-normal) var(--ease-editorial);
+  will-change: opacity, transform;
+}
+
+.reveal-init.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-fade {
+  opacity: 0;
+  transition: opacity var(--duration-slow) var(--ease-editorial);
+}
+
+.reveal-fade.is-revealed {
+  opacity: 1;
+}
+
+.reveal-line-h {
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--duration-normal) var(--ease-editorial);
+}
+
+.reveal-line-h.is-revealed {
+  transform: scaleX(1);
+}
+
+/* Delays escalonados para leitura editorial */
+.delay-1 { transition-delay: 80ms; }
+.delay-2 { transition-delay: 160ms; }
+.delay-3 { transition-delay: 240ms; }
+.delay-4 { transition-delay: 320ms; }
+.delay-5 { transition-delay: 400ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal-init {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .reveal-line-h {
+    transform: none !important;
+  }
+}
+
