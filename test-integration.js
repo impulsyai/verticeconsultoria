@@ -184,6 +184,75 @@ async function runTests() {
     }
   });
 
+  // 8. Teste de Landing Page Longa (>200 caracteres) com UTMs densas
+  await assertTest('8. Landing Page longa (>200 chars) com parâmetros UTM complexos', async () => {
+    const longUrl = 'http://localhost:3000/solucoes/recrutamento-executivo?utm_source=google_ads_search&utm_medium=paid_search_cpc&utm_campaign=recife_industria_lideranca_2026_q3&utm_content=anuncio_responsivo_variacao_b_diretoria&utm_term=consultoria+rh+estrategico+recife&gclid=Cj0KCQjwm5e5BhCBARIsAOP0GTS998877665544332211aabbcc';
+    
+    if (longUrl.length <= 200) {
+      throw new Error(`URL de teste precisa ter >200 chars (atual: ${longUrl.length})`);
+    }
+
+    const payload = {
+      nome: 'Lead URL Longa',
+      empresa: 'EMPRESA MULTINACIONAL TESTE',
+      cargo: 'Head de People',
+      whatsapp: '(81) 97777-6666',
+      email: 'lead.urllonga@multinacional.com.br',
+      servico: 'Cargos, Salários & Carreiras',
+      porte: '50 a 200 colaboradores',
+      desafio: 'Teste de persistência de URL longa em Small Text',
+      utm_source: 'google_ads_search',
+      utm_medium: 'paid_search_cpc',
+      utm_campaign: 'recife_industria_lideranca_2026_q3',
+      utm_content: 'anuncio_responsivo_variacao_b_diretoria',
+      landing_page: longUrl
+    };
+
+    const res = await fetch(`${BASE_URL}/api/lead`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (res.status !== 200) {
+      throw new Error(`Deveria aceitar URL longa com 200, retornou ${res.status}`);
+    }
+
+    const data = await res.json();
+    if (!data.success) {
+      throw new Error(`Resposta não indicou sucesso: ${JSON.stringify(data)}`);
+    }
+  });
+
+  // 9. Teste de Porte Amplo ("200 a 1.000 colaboradores") sem mapeamento forçado impreciso
+  await assertTest('9. Porte amplo "200 a 1.000 colaboradores" mantido fiel em challenge sem no_of_employees forçado', async () => {
+    const payload = {
+      nome: 'Lead Faixa Ampla',
+      empresa: 'INDÚSTRIA GRANDE TESTE',
+      cargo: 'Diretor Industrial',
+      whatsapp: '(81) 96666-5555',
+      email: 'lead.porteamplo@industria.com.br',
+      servico: 'Pesquisa de Clima Organizacional',
+      porte: '200 a 1.000 colaboradores',
+      desafio: 'Necessidade de diagnóstico organizacional profundo para planta industrial'
+    };
+
+    const res = await fetch(`${BASE_URL}/api/lead`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (res.status !== 200) {
+      throw new Error(`Deveria aceitar com 200, retornou ${res.status}`);
+    }
+
+    const data = await res.json();
+    if (!data.success) {
+      throw new Error(`Resposta não indicou sucesso: ${JSON.stringify(data)}`);
+    }
+  });
+
   console.log(`\n=== RESUMO DOS TESTES: ${passed} passaram | ${failed} falharam ===`);
   if (failed > 0) process.exit(1);
 }

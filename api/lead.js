@@ -23,17 +23,22 @@ const ALLOWED_SERVICES = [
   'Outro'
 ];
 
+// Mapeamento estrito apenas para faixas com correspondência semântica segura no CRM Lead.
+// Faixas amplas como "200 a 1.000 colaboradores" e "Até 50 colaboradores" são preservadas fielmente
+// no campo 'challenge', sem forçar valores imprecisos no Select 'no_of_employees'.
+// Futuramente o formulário poderá ser refinado para faixas atômicas (ex: 201-500, 501-1000, 1000+).
 const EMPLOYEES_MAP = {
-  'Até 50 colaboradores': '11-50',
   '50 a 200 colaboradores': '51-200',
-  '200 a 1.000 colaboradores': '201-500',
   '+1.000 colaboradores': '1000+'
 };
 
-// Rate limiting leve em memória (janela deslizante de 60s)
+// Proteção leve em memória (best-effort por nó/instância serverless).
+// NOTA ARQUITETURAL: Em ambientes serverless com múltiplas réplicas concorrentes,
+// o Map em memória atua como barreira leve contra floods locais.
+// Proteção robusta futura em escala poderá utilizar Cloudflare Turnstile e/ou store persistente.
 const rateLimitMap = new Map();
 const RATE_LIMIT_WINDOW_MS = 60 * 1000;
-const MAX_REQUESTS_PER_WINDOW = 10;
+const MAX_REQUESTS_PER_WINDOW = parseInt(process.env.RATE_LIMIT_MAX || '30', 10);
 
 function isRateLimited(ip) {
   const now = Date.now();
@@ -60,16 +65,9 @@ function isRateLimited(ip) {
 }
 
 module.exports = async function handler(req, res) {
-  // CORS permissivo para requisições do mesmo domínio / Vercel
-  if (typeof res.setHeader === 'function') {
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept');
-  }
-
+  // Operação Same-Origin: preflight OPTIONS tratado com 204 sem wildcards permissivos
   if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+    return res.status(204).end();
   }
 
   if (req.method !== 'POST') {
