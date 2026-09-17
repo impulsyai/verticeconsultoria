@@ -872,12 +872,16 @@ const THEME_LOGOS = {
     'dark-bg': 'assets/logos/logo-negativa-branca.png'
   },
   navy: {
-    'light-bg': 'assets/logos/logo-navy-dark.png',
-    'dark-bg': 'assets/logos/logo-navy-light.png'
+    'light-bg': 'assets/logos/logo-navy-transparent-official.png',
+    'dark-bg': 'assets/logos/logo-navy-dark-official.png',
+    'transparent': 'assets/logos/logo-navy-transparent-official.png',
+    'solid-light': 'assets/logos/logo-navy-light-solid-official.png'
   },
   petrol: {
-    'light-bg': 'assets/logos/logo-petrol-dark.png',
-    'dark-bg': 'assets/logos/logo-petrol-light.png'
+    'light-bg': 'assets/logos/logo-petrol-transparent-official.png',
+    'dark-bg': 'assets/logos/logo-petrol-dark-official.png',
+    'transparent': 'assets/logos/logo-petrol-transparent-official.png',
+    'solid-light': 'assets/logos/logo-petrol-light-solid-official.png'
   }
 };
 

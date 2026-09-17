@@ -93,6 +93,34 @@
         }
         document.documentElement.setAttribute('data-theme', themeToApply);
 
+        // Pré-aplicar logos oficiais assim que o DOM estiver pronto para evitar qualquer FOUC de imagem
+        var earlyLogos = {
+          current: {
+            'light-bg': 'assets/logos/logo-cortada.png',
+            'dark-bg': 'assets/logos/logo-negativa-branca.png'
+          },
+          navy: {
+            'light-bg': 'assets/logos/logo-navy-transparent-official.png',
+            'dark-bg': 'assets/logos/logo-navy-dark-official.png'
+          },
+          petrol: {
+            'light-bg': 'assets/logos/logo-petrol-transparent-official.png',
+            'dark-bg': 'assets/logos/logo-petrol-dark-official.png'
+          }
+        };
+
+        if (themeToApply !== 'current') {
+          window.addEventListener('DOMContentLoaded', function() {
+            var imgs = document.querySelectorAll('img[data-logo-variant]');
+            imgs.forEach(function(img) {
+              var v = img.getAttribute('data-logo-variant') || 'light-bg';
+              if (earlyLogos[themeToApply] && earlyLogos[themeToApply][v]) {
+                img.src = earlyLogos[themeToApply][v];
+              }
+            });
+          });
+        }
+
         var targetSec = params.get('section');
         if (targetSec) {
           window.addEventListener('DOMContentLoaded', function() {
