@@ -35,7 +35,7 @@ if (fs.existsSync(envPath)) {
 
 const leadHandler = require('./api/lead.js');
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3333;
 const PUBLIC_DIR = __dirname;
 
 const MIME_TYPES = {
@@ -98,6 +98,18 @@ const server = http.createServer(async (req, res) => {
   // Arquivos Estáticos
   let safePath = path.normalize(pathname).replace(/^(\.\.[\/\\])+/, '');
   if (safePath === '/' || safePath === '\\') safePath = '/index.html';
+
+  // 🔒 Segurança: Bloquear acesso direto a arquivos sensíveis (.env, .git, data/*)
+  const normalizedLower = safePath.toLowerCase().replace(/\\/g, '/');
+  if (
+    normalizedLower.startsWith('/.env') ||
+    normalizedLower.startsWith('/.git') ||
+    normalizedLower.startsWith('/data')
+  ) {
+    res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
+    res.end('403 Forbidden');
+    return;
+  }
 
   const filePath = path.join(PUBLIC_DIR, safePath);
 

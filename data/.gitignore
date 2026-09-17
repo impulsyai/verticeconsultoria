@@ -1,0 +1,3 @@
+# Ignorar todos os dados de candidatos para garantir compliance LGPD e privacidade
+*
+!.gitignore

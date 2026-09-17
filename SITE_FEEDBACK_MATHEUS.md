@@ -205,3 +205,40 @@ Foram capturadas 24 capturas de tela completas em alta resolução cobrindo Desk
   * `02_navy_after_click.png` — Estado Navy após clique real
   * `03_petrol_after_click.png` — Estado Petrol após clique real
 
+### 11. Integração das Logos Oficiais Dinâmicas e Roteamento de Candidatos (Talentos)
+
+#### A. Logos Oficiais da Marca (Assets do Juca)
+* **Diretório de Origem Fornecido:** `C:\Users\wareb\OneDrive\Desktop\Area de Trabalho\Impulsy.ai\Vertice\assets\novas logos`
+* **Assets Oficiais Catalogados e Mapeados em `site/assets/logos/`:**
+  * **Navy:**
+    * `logo-navy-transparent-official.png` (1254x1254, RGBA com canal alfa transparente, foreground escuro Navy) — aplicado em superfícies claras (`light-bg`).
+    * `logo-navy-dark-official.png` (1254x1254, RGB, fundo sólido `#0A2E49`, foreground claro) — aplicado em superfícies escuras (`dark-bg`).
+    * `logo-navy-light-solid-official.png` (1254x1254, RGB, fundo sólido `#E7E0CF`, foreground Navy).
+  * **Verde-Petróleo:**
+    * `logo-petrol-transparent-official.png` (1254x1254, RGBA com canal alfa transparente, foreground escuro Petrol) — aplicado em superfícies claras (`light-bg`).
+    * `logo-petrol-dark-official.png` (1254x1254, RGB, fundo sólido `#184844`, foreground claro) — aplicado em superfícies escuras (`dark-bg`).
+    * `logo-petrol-light-solid-official.png` (1254x1254, RGB, fundo sólido `#E8DFCE`, foreground Petrol).
+  * **Current (Vinho Institucional):**
+    * `logo-cortada.png` (light-bg)
+    * `logo-negativa-branca.png` (dark-bg)
+* **Preservação Visual 100% Estrita:** Nenhuma alteração geométrica, sem filtros CSS (`invert`, `hue-rotate`, etc.), preservação total das 3 faces poligonais do símbolo triangular da Vértice e tipografia institucional.
+* **Troca Instantânea & Zero-FOUC:** O sistema `THEME_LOGOS` e a função central `setTheme(theme)` atualizam todos os seletores e imagens `data-logo-variant` no ato do clique (sem reload). Além disso, o script no `<head>` pré-aplica as logos oficiais em tempo zero caso o tema esteja salvo no `localStorage`.
+
+#### B. Roteamento Arquitetural: Candidato vs. CRM Comercial
+* **Separação Obrigatória:**
+  * **EMPRESA:** Continua direcionado ao pipeline comercial corporativo do Frappe CRM (`/api/resource/CRM Lead`).
+  * **CANDIDATO:** Roteado com exclusividade para a **People Foundation / Banco de Talentos** (`vertice_candidates`). **Candidatos nunca viram CRM Lead.**
+* **Implementação Server-Side em `api/lead.js`:**
+  * Validação severa de dados (`nome`, `email`, `whatsapp`, `area_atuacao`, etc.).
+  * Normalização de telefone para formato **E.164** (`+55...`), e-mail para `email_normalized`, e parsing de cidade/UF.
+  * Integração com endpoint REST Supabase (`vertice_candidates`) se configurado em ambiente.
+  * Buffer persistente de segurança e ingestão em `site/data/candidates.jsonl` com **deduplicação ativa** por `email_normalized` e `phone_e164` (idempotência garantida).
+  * O diretório `site/data/` é protegido com regras HTTP 403 Forbidden no `dev-server.js` e protegido de versionamento via `site/data/.gitignore`.
+* **Evidências Geradas (`C:\dev\vertice-site-review\10_official_logos\`):**
+  * `01_current_header.png` — Header Current com logo vinho
+  * `02_navy_header.png` — Header Navy com logo oficial Navy transparente
+  * `03_petrol_header.png` — Header Petrol com logo oficial Petrol transparente
+  * `04_navy_dark_section.png` — Seção escura (#solucoes) em tema Navy
+  * `05_petrol_dark_section.png` — Seção escura (#solucoes) em tema Petrol
+  * `06_mobile_navy.png` — Viewport Mobile (390x844) em tema Navy
+  * `07_mobile_petrol.png` — Viewport Mobile (390x844) em tema Petrol
