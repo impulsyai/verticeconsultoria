@@ -56,6 +56,12 @@
   --section-py-md: 96px;
   --section-py-sm: 64px;
 
+  /* 📐 Header & Superfícies */
+  --header-bg: rgba(239, 231, 223, 0.94);
+  --header-bg-sticky: rgba(239, 231, 223, 0.98);
+  --card-bg-light: #FFFFFF;
+  --surface-alt: #E8E0D7;
+
   /* 🔘 Arredondamentos (Sóbrio / Reto) */
   --radius-sm: 4px;
   --radius-md: 8px;
@@ -69,4 +75,148 @@
   --duration-normal: 400ms;
   --duration-slow: 750ms;
 }
+
+/* ==========================================================================
+   TEMA 1: IDENTIDADE ATUAL (data-theme="current")
+   Conceito: Nobreza, Sobriedade, Corte Editorial, Elegância
+   ========================================================================== */
+[data-theme="current"] {
+  --vertice-ivory: #EFE7DF;
+  --vertice-ivory-light: #F7F3EE;
+  --vertice-black: #010101;
+  --vertice-graphite: #505253;
+  --vertice-graphite-light: #7A7D7F;
+  --vertice-wine: #4D1021;
+  --vertice-wine-dark: #380B17;
+  --vertice-wine-light: #C06277;
+  --vertice-wine-accent: #8E233E;
+
+  --bg-primary: var(--vertice-ivory);
+  --bg-dark: var(--vertice-black);
+  --bg-wine: var(--vertice-wine);
+  --text-primary: var(--vertice-black);
+  --text-secondary: var(--vertice-graphite);
+  --text-muted: var(--vertice-graphite-light);
+  --text-on-dark: var(--vertice-ivory);
+  --text-on-wine: var(--vertice-ivory);
+  --accent-primary: var(--vertice-wine);
+
+  --border-ultra-soft: rgba(1, 1, 1, 0.06);
+  --border-soft: rgba(1, 1, 1, 0.12);
+  --border-medium: rgba(1, 1, 1, 0.22);
+  --border-wine: rgba(77, 16, 33, 0.25);
+  --border-on-wine: rgba(239, 231, 223, 0.18);
+  --border-on-dark: rgba(239, 231, 223, 0.12);
+
+  --wine-soft: rgba(77, 16, 33, 0.08);
+  --graphite-soft: rgba(80, 82, 83, 0.08);
+
+  --header-bg: rgba(239, 231, 223, 0.94);
+  --header-bg-sticky: rgba(239, 231, 223, 0.98);
+  --card-bg-light: #FFFFFF;
+  --surface-alt: #E8E0D7;
+}
+
+/* ==========================================================================
+   TEMA 2: AZUL-MARINHO (data-theme="navy")
+   Conceito: Confiança, Profissionalismo, Competência, Credibilidade
+   Cores Oficiais:
+   #17324D (navy-900), #3978A8 (navy-600), #DCECF5 (navy-100),
+   #F7F8F6 (navy-50), #5B6570 (navy-gray)
+   ========================================================================== */
+[data-theme="navy"] {
+  --navy-900: #17324D;
+  --navy-600: #3978A8;
+  --navy-100: #DCECF5;
+  --navy-50:  #F7F8F6;
+  --navy-gray: #5B6570;
+
+  /* Mapeamento Semântico */
+  --vertice-ivory: var(--navy-50);
+  --vertice-ivory-light: #FFFFFF;
+  --vertice-black: #0F2235;
+  --vertice-graphite: var(--navy-gray);
+  --vertice-graphite-light: #7E8C9B;
+  --vertice-wine: var(--navy-900);
+  --vertice-wine-dark: #0F2235;
+  --vertice-wine-light: var(--navy-600);
+  --vertice-wine-accent: var(--navy-600);
+
+  --bg-primary: var(--navy-50);
+  --bg-dark: #0B1927;
+  --bg-wine: var(--navy-900);
+  --text-primary: #0F2235;
+  --text-secondary: var(--navy-gray);
+  --text-muted: #7E8C9B;
+  --text-on-dark: var(--navy-50);
+  --text-on-wine: var(--navy-50);
+  --accent-primary: var(--navy-600);
+
+  --border-ultra-soft: rgba(23, 50, 77, 0.06);
+  --border-soft: rgba(23, 50, 77, 0.12);
+  --border-medium: rgba(23, 50, 77, 0.22);
+  --border-wine: rgba(57, 120, 168, 0.35);
+  --border-on-wine: rgba(220, 236, 245, 0.22);
+  --border-on-dark: rgba(220, 236, 245, 0.14);
+
+  --wine-soft: rgba(57, 120, 168, 0.08);
+  --graphite-soft: rgba(91, 101, 112, 0.08);
+
+  --header-bg: rgba(247, 248, 246, 0.94);
+  --header-bg-sticky: rgba(247, 248, 246, 0.98);
+  --card-bg-light: #FFFFFF;
+  --surface-alt: #EBF3F8;
+}
+
+/* ==========================================================================
+   TEMA 3: VERDE-PETRÓLEO (data-theme="petrol")
+   Conceito: Equilíbrio, Desenvolvimento, Acolhimento, Maturidade
+   Cores Oficiais:
+   #174A4A (petrol-900), #4F8A78 (petrol-600), #DDEBE4 (petrol-100),
+   #E9E1D2 (petrol-50), #293333 (petrol-dark)
+   ========================================================================== */
+[data-theme="petrol"] {
+  --petrol-900: #174A4A;
+  --petrol-600: #4F8A78;
+  --petrol-100: #DDEBE4;
+  --petrol-50:  #E9E1D2;
+  --petrol-dark: #293333;
+
+  /* Mapeamento Semântico */
+  --vertice-ivory: var(--petrol-50);
+  --vertice-ivory-light: #F4EFE6;
+  --vertice-black: var(--petrol-dark);
+  --vertice-graphite: #4A5656;
+  --vertice-graphite-light: #6E7E7B;
+  --vertice-wine: var(--petrol-900);
+  --vertice-wine-dark: #0E3535;
+  --vertice-wine-light: var(--petrol-600);
+  --vertice-wine-accent: var(--petrol-600);
+
+  --bg-primary: var(--petrol-50);
+  --bg-dark: #121A1A;
+  --bg-wine: var(--petrol-900);
+  --text-primary: var(--petrol-dark);
+  --text-secondary: #4A5656;
+  --text-muted: #6E7E7B;
+  --text-on-dark: var(--petrol-50);
+  --text-on-wine: var(--petrol-50);
+  --accent-primary: var(--petrol-600);
+
+  --border-ultra-soft: rgba(41, 51, 51, 0.06);
+  --border-soft: rgba(41, 51, 51, 0.12);
+  --border-medium: rgba(41, 51, 51, 0.22);
+  --border-wine: rgba(79, 138, 120, 0.35);
+  --border-on-wine: rgba(221, 235, 228, 0.22);
+  --border-on-dark: rgba(221, 235, 228, 0.14);
+
+  --wine-soft: rgba(79, 138, 120, 0.08);
+  --graphite-soft: rgba(41, 51, 51, 0.08);
+
+  --header-bg: rgba(233, 225, 210, 0.94);
+  --header-bg-sticky: rgba(233, 225, 210, 0.98);
+  --card-bg-light: #F4EFE6;
+  --surface-alt: #DEE9E3;
+}
+
 

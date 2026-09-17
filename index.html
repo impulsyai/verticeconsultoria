@@ -77,6 +77,33 @@
     ]
   }
   </script>
+
+  <!-- 🎨 Inicialização Imediata do Tema & Roteamento Visual (Zero Flash / No-FOUC) -->
+  <script>
+    (function() {
+      try {
+        var params = new URLSearchParams(window.location.search);
+        var urlTheme = params.get('theme') || params.get('tema');
+        var savedTheme = urlTheme || localStorage.getItem('vertice_theme') || 'current';
+        if (['current', 'navy', 'petrol'].indexOf(savedTheme) !== -1) {
+          document.documentElement.setAttribute('data-theme', savedTheme);
+          if (urlTheme) localStorage.setItem('vertice_theme', urlTheme);
+        } else {
+          document.documentElement.setAttribute('data-theme', 'current');
+        }
+
+        var targetSec = params.get('section');
+        if (targetSec) {
+          window.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+              var el = document.getElementById(targetSec);
+              if (el) el.scrollIntoView({ behavior: 'instant', block: 'start' });
+            }, 50);
+          });
+        }
+      } catch (e) {}
+    })();
+  </script>
 </head>
 <body>
 
@@ -84,12 +111,12 @@
   <div id="global-reading-bar" class="global-reading-bar" aria-hidden="true"></div>
 
   <!-- ========================================================================
-       00. HEADER INSTITUCIONAL (V2 — Fixed Sem Tranco, Logo Cortada Ampliada)
+       00. HEADER INSTITUCIONAL (V2 — Fixed Sem Tranco, Logo Dinâmica Multitema)
        ======================================================================== -->
   <header class="site-header" id="site-header">
     <div class="container header-inner">
       <a href="#" class="header-brand" aria-label="Vértice — Início">
-        <img src="assets/logos/logo-cortada.png" alt="Vértice — Pessoas & Estratégia" class="header-logo" width="160" height="58">
+        <img src="assets/logos/logo-cortada.png" alt="Vértice — Pessoas & Estratégia" class="header-logo" width="160" height="58" data-logo-variant="light-bg">
       </a>
 
       <nav class="header-nav" id="header-nav" aria-label="Navegação principal">
@@ -97,21 +124,40 @@
         <a href="#solucoes" class="nav-link">Soluções</a>
         <a href="#metodologia" class="nav-link">Como atuamos</a>
         <a href="#case-tramontina" class="nav-link">Cases</a>
+        <a href="#depoimentos" class="nav-link">Depoimentos</a>
         <a href="#quem-somos" class="nav-link">Quem somos</a>
         <a href="#insights" class="nav-link">Insights</a>
         <a href="#talentos" class="nav-link">Talentos</a>
+        <a href="#faq" class="nav-link">FAQ</a>
         <a href="#contato" class="nav-link">Contato</a>
+
+        <!-- Seletor de Identidade no Drawer Mobile -->
+        <div class="mobile-theme-selector-wrap">
+          <span class="mobile-theme-label">Identidade Visual:</span>
+          <div class="theme-switcher-pill" role="radiogroup" aria-label="Seletor de Identidade Visual Mobile">
+            <button type="button" class="theme-dot-btn is-active" data-theme-val="current" data-tooltip="Atual (Vinho)" aria-label="Tema Atual (Vinho)" aria-checked="true" role="radio"></button>
+            <button type="button" class="theme-dot-btn" data-theme-val="navy" data-tooltip="Azul-Marinho" aria-label="Tema Azul-Marinho" aria-checked="false" role="radio"></button>
+            <button type="button" class="theme-dot-btn" data-theme-val="petrol" data-tooltip="Verde-Petróleo" aria-label="Tema Verde-Petróleo" aria-checked="false" role="radio"></button>
+          </div>
+        </div>
 
         <!-- Botão CTA Mobile (Estilo Dropdown Sheet) -->
         <div class="mobile-nav-cta">
-          <a href="#contato" class="btn btn-primary btn-block">
+          <a href="#contato" class="btn btn-primary btn-block" data-form-profile="empresa">
             FALAR COM A VÉRTICE <span class="arrow">→</span>
           </a>
         </div>
       </nav>
 
       <div class="header-actions">
-        <a href="#contato" class="btn btn-primary header-btn">
+        <!-- 🎨 Seletor Discreto de Identidade Visual na Navbar (3 Swatches) -->
+        <div class="theme-switcher-pill" role="radiogroup" aria-label="Seletor de Identidade Visual">
+          <button type="button" class="theme-dot-btn is-active" data-theme-val="current" data-tooltip="Atual (Vinho)" aria-label="Tema Atual (Vinho)" aria-checked="true" role="radio"></button>
+          <button type="button" class="theme-dot-btn" data-theme-val="navy" data-tooltip="Azul-Marinho" aria-label="Tema Azul-Marinho" aria-checked="false" role="radio"></button>
+          <button type="button" class="theme-dot-btn" data-theme-val="petrol" data-tooltip="Verde-Petróleo" aria-label="Tema Verde-Petróleo" aria-checked="false" role="radio"></button>
+        </div>
+
+        <a href="#contato" class="btn btn-primary header-btn" data-form-profile="empresa">
           Falar com a Vértice <span class="arrow">→</span>
         </a>
         <button class="mobile-menu-toggle" aria-label="Abrir menu de navegação" aria-expanded="false" aria-controls="header-nav">
@@ -702,6 +748,85 @@
     </section>
 
     <!-- ========================================================================
+         06.5. DEPOIMENTOS (V2 — Prova Social Executiva Orientada a Dados)
+         ======================================================================== -->
+    <section class="section-testimonials section-viewport" id="depoimentos">
+      <div class="container">
+        <div class="reveal-init" style="max-width: 760px;">
+          <div class="eyebrow-wrapper">
+            <span class="eyebrow">RELAÇÕES DE CONFIANÇA</span>
+            <span class="eyebrow-line"></span>
+          </div>
+
+          <h2 class="display-sm text-balance">
+            O que lideranças empresariais<br>
+            <span class="text-wine">dizem sobre a atuação da Vértice.</span>
+          </h2>
+
+          <p style="color: var(--text-secondary); margin-top: 14px; font-size: 1.05rem; line-height: 1.65;">
+            Relações construídas com discrição, consistência técnica e compromisso real com a governança de pessoas nas organizações.
+          </p>
+        </div>
+
+        <!-- Grid de Depoimentos (Alimentado pelo script central de dados testimonialsData) -->
+        <div class="testimonials-grid reveal-init delay-2" id="testimonials-grid">
+          <!-- Card 1 (Placeholder Editorial Oficial) -->
+          <div class="testimonial-card">
+            <span class="testimonial-badge-editorial">RECRUTAMENTO ESTRATÉGICO</span>
+            <div class="testimonial-quote-mark">“</div>
+            <p class="testimonial-quote-text">
+              “Depoimento executivo do cliente em homologação. Espaço reservado para relato sobre precisão no recrutamento de posições-chave e alinhamento cultural com o conselho.”
+            </p>
+            <div class="testimonial-card-author">
+              <div class="testimonial-avatar-placeholder">V</div>
+              <div class="testimonial-author-meta">
+                <span class="testimonial-author-name">Liderança Executiva</span>
+                <span class="testimonial-author-role">Diretoria de Recursos Humanos · Cliente Corporativo</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2 (Placeholder Editorial Oficial) -->
+          <div class="testimonial-card">
+            <span class="testimonial-badge-editorial">DESENVOLVIMENTO DE LÍDERES</span>
+            <div class="testimonial-quote-mark">“</div>
+            <p class="testimonial-quote-text">
+              “Depoimento executivo do cliente em homologação. Espaço reservado para síntese de impacto sobre formação de lideranças e sustentação de resultados organizacionais.”
+            </p>
+            <div class="testimonial-card-author">
+              <div class="testimonial-avatar-placeholder">V</div>
+              <div class="testimonial-author-meta">
+                <span class="testimonial-author-name">Diretoria Executiva / CEO</span>
+                <span class="testimonial-author-role">Comitê de Gente & Gestão · Grupo Empresarial</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3 (Placeholder Editorial Oficial) -->
+          <div class="testimonial-card">
+            <span class="testimonial-badge-editorial">PESQUISA DE CLIMA & DHO</span>
+            <div class="testimonial-quote-mark">“</div>
+            <p class="testimonial-quote-text">
+              “Depoimento executivo do cliente em homologação. Espaço reservado para avaliação sobre profundidade diagnóstica e clareza de planos de ação para a diretoria.”
+            </p>
+            <div class="testimonial-card-author">
+              <div class="testimonial-avatar-placeholder">V</div>
+              <div class="testimonial-author-meta">
+                <span class="testimonial-author-name">Gestão Corporativa</span>
+                <span class="testimonial-author-role">Gerência Geral · Indústria & Serviços</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bottom-bar-editorial reveal-init delay-3">
+          <span>PARCERIAS ESTRATÉGICAS DE LONGO PRAZO.</span>
+          <span>REPUTAÇÃO CONSTRUÍDA NA CONSISTÊNCIA DE CADA ENTREGA.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
          07. A VÉRTICE / HISTÓRIA & LIDERANÇA (V2 — Editorial Showcase Fiel ao Mockup 07)
          ======================================================================== -->
     <section class="section-historia" id="quem-somos">
@@ -860,15 +985,15 @@
             </h2>
 
             <p class="talentos-desc">
-              Conectamos profissionais a empresas que buscam competência, alinhamento e relações de longo prazo.
+              Conectamos profissionais a empresas que buscam competência técnica, maturidade de liderança e relações corporativas de longo prazo.
             </p>
 
             <div class="talentos-cta-row">
-              <a href="#contato" class="btn btn-solid-ivory">
-                Entrar no banco de talentos <span class="arrow">→</span>
+              <a href="#contato" class="btn btn-solid-ivory" data-form-profile="candidato" id="cta-talentos-banco">
+                CADASTRAR MEU PERFIL <span class="arrow">→</span>
               </a>
-              <a href="#contato" class="link-editorial text-ivory">
-                Ver oportunidades em aberto
+              <a href="#faq" class="link-editorial text-ivory">
+                Dúvidas sobre o processo seletivo <span class="arrow">→</span>
               </a>
             </div>
           </div>
@@ -887,6 +1012,174 @@
         <div class="bottom-bar-editorial on-wine reveal-init delay-3">
           <span>CONECTANDO TALENTO E OPORTUNIDADE.</span>
           <span>NOVOS CAMINHOS PARA PROFISSIONAIS E EMPRESAS.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         09.5. PERGUNTAS FREQUENTES (FAQ — Esclarecimentos Objetivos e Sem Promessas Falsas)
+         ======================================================================== -->
+    <section class="section-faq section-viewport" id="faq">
+      <div class="container">
+        <div class="reveal-init" style="text-align: center; max-width: 760px; margin: 0 auto 36px auto;">
+          <div class="eyebrow-wrapper" style="justify-content: center;">
+            <span class="eyebrow">DÚVIDAS FREQUENTES</span>
+            <span class="eyebrow-line"></span>
+          </div>
+
+          <h2 class="display-sm">
+            Perguntas Frequentes sobre<br>
+            <span class="text-wine">nossos processos e atuação.</span>
+          </h2>
+
+          <p style="color: var(--text-secondary); margin-top: 14px; font-size: 1.05rem; line-height: 1.65;">
+            Informações claras e diretas para empresas contratantes e profissionais em busca de desenvolvimento.
+          </p>
+        </div>
+
+        <!-- Filtro Rápido de FAQ -->
+        <div class="faq-filter-bar reveal-init delay-1">
+          <button type="button" class="faq-filter-btn is-active" data-faq-filter="all">Todas as Perguntas</button>
+          <button type="button" class="faq-filter-btn" data-faq-filter="empresa">Para Empresas</button>
+          <button type="button" class="faq-filter-btn" data-faq-filter="candidato">Para Candidatos / Talentos</button>
+        </div>
+
+        <!-- Lista Accordion com 8 Perguntas Criteriosas -->
+        <div class="faq-list reveal-init delay-2" id="faq-accordion-list">
+          
+          <!-- Q1: Empresas -->
+          <div class="faq-item" data-faq-category="empresa">
+            <button type="button" class="faq-question-btn" aria-expanded="false">
+              <div>
+                <span class="faq-category-badge">Para Empresas</span>
+                <h3 class="faq-question-title">Como funciona a abordagem da Vértice em Recrutamento & Seleção?</h3>
+              </div>
+              <div class="faq-icon-wrap" aria-hidden="true">+</div>
+            </button>
+            <div class="faq-answer-pane">
+              <p>
+                Atuamos com diagnóstico aprofundado do perfil da vaga, alinhando competências técnicas, maturidade comportamental e cultura organizacional. Conduzimos entrevistas estruturadas, checagem referencial e mapeamento detalhado para entregar finalistas altamente aderentes ao desafio do negócio.
+              </p>
+            </div>
+          </div>
+
+          <!-- Q2: Empresas -->
+          <div class="faq-item" data-faq-category="empresa">
+            <button type="button" class="faq-question-btn" aria-expanded="false">
+              <div>
+                <span class="faq-category-badge">Para Empresas</span>
+                <h3 class="faq-question-title">A Vértice atende organizações de quais portes e setores?</h3>
+              </div>
+              <div class="faq-icon-wrap" aria-hidden="true">+</div>
+            </button>
+            <div class="faq-answer-pane">
+              <p>
+                Atendemos desde médias empresas em fase de estruturação e governança até grandes grupos corporativos nos setores industrial, agronegócio, serviços, comércio e tecnologia.
+              </p>
+            </div>
+          </div>
+
+          <!-- Q3: Empresas -->
+          <div class="faq-item" data-faq-category="empresa">
+            <button type="button" class="faq-question-btn" aria-expanded="false">
+              <div>
+                <span class="faq-category-badge">Para Empresas</span>
+                <h3 class="faq-question-title">Qual é a abrangência geográfica de atuação da consultoria?</h3>
+              </div>
+              <div class="faq-icon-wrap" aria-hidden="true">+</div>
+            </button>
+            <div class="faq-answer-pane">
+              <p>
+                A Vértice possui sede em Recife/PE e realiza projetos em formato híbrido e presencial em todo o Brasil, com processos seletivos e diagnósticos organizacionais conduzidos com padrão nacional.
+              </p>
+            </div>
+          </div>
+
+          <!-- Q4: Empresas -->
+          <div class="faq-item" data-faq-category="empresa">
+            <button type="button" class="faq-question-btn" aria-expanded="false">
+              <div>
+                <span class="faq-category-badge">Para Empresas</span>
+                <h3 class="faq-question-title">Como iniciar um diagnóstico ou processo seletivo com a Vértice?</h3>
+              </div>
+              <div class="faq-icon-wrap" aria-hidden="true">+</div>
+            </button>
+            <div class="faq-answer-pane">
+              <p>
+                O primeiro passo é solicitar um contato através do nosso formulário institucional ou WhatsApp corporativo. Um de nossos consultores executivos agendará uma conversa diagnóstica para compreender o momento e a demanda da organização.
+              </p>
+            </div>
+          </div>
+
+          <!-- Q5: Candidatos -->
+          <div class="faq-item" data-faq-category="candidato">
+            <button type="button" class="faq-question-btn" aria-expanded="false">
+              <div>
+                <span class="faq-category-badge">Para Candidatos</span>
+                <h3 class="faq-question-title">Como envio meu perfil profissional para o banco de talentos?</h3>
+              </div>
+              <div class="faq-icon-wrap" aria-hidden="true">+</div>
+            </button>
+            <div class="faq-answer-pane">
+              <p>
+                Basta selecionar a opção "Profissional / Candidato" no formulário abaixo, preencher suas informações de contato, área de atuação e link do LinkedIn. Seu cadastro é integrado à nossa base de triagem para posições compatíveis.
+              </p>
+            </div>
+          </div>
+
+          <!-- Q6: Candidatos -->
+          <div class="faq-item" data-faq-category="candidato">
+            <button type="button" class="faq-question-btn" aria-expanded="false">
+              <div>
+                <span class="faq-category-badge">Para Candidatos</span>
+                <h3 class="faq-question-title">Existe algum custo para o profissional participar dos processos?</h3>
+              </div>
+              <div class="faq-icon-wrap" aria-hidden="true">+</div>
+            </button>
+            <div class="faq-answer-pane">
+              <p>
+                Não. A participação em qualquer processo seletivo conduzido pela Vértice é 100% gratuita para os candidatos. Nossos serviços são contratados e remunerados exclusivamente pelas empresas clientes.
+              </p>
+            </div>
+          </div>
+
+          <!-- Q7: Candidatos -->
+          <div class="faq-item" data-faq-category="candidato">
+            <button type="button" class="faq-question-btn" aria-expanded="false">
+              <div>
+                <span class="faq-category-badge">Para Candidatos</span>
+                <h3 class="faq-question-title">Meus dados podem ser considerados para outras oportunidades futuras?</h3>
+              </div>
+              <div class="faq-icon-wrap" aria-hidden="true">+</div>
+            </button>
+            <div class="faq-answer-pane">
+              <p>
+                Sim. Suas informações e histórico permanecem ativos em nossa base de talentos, permitindo que nossa equipe de consultores entre em contato quando surgirem novas oportunidades alinhadas ao seu perfil.
+              </p>
+            </div>
+          </div>
+
+          <!-- Q8: Candidatos -->
+          <div class="faq-item" data-faq-category="candidato">
+            <button type="button" class="faq-question-btn" aria-expanded="false">
+              <div>
+                <span class="faq-category-badge">Para Candidatos</span>
+                <h3 class="faq-question-title">Como sou informado sobre o andamento de um processo seletivo?</h3>
+              </div>
+              <div class="faq-icon-wrap" aria-hidden="true">+</div>
+            </button>
+            <div class="faq-answer-pane">
+              <p>
+                Nossos consultores entram em contato diretamente via WhatsApp ou e-mail com os profissionais selecionados para as fases de entrevista e alinhamento de perfil conforme o andamento de cada projeto.
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="bottom-bar-editorial reveal-init delay-3">
+          <span>TRANSPARÊNCIA EM CADA ETAPA DO PROCESSO.</span>
+          <span>DECISÕES SEGURAS PARA EMPRESAS E PROFISSIONAIS.</span>
         </div>
       </div>
     </section>
@@ -938,142 +1231,286 @@
             </div>
           </div>
 
-          <!-- Coluna Direita: FORMULÁRIO B2B PREMIUM (Pronto para CRM / Frappe) -->
+          <!-- Coluna Direita: FORMULÁRIO SEGMENTADO (Empresa × Candidato) -->
           <div class="b2b-form-card reveal-init delay-2">
-            <div class="b2b-form-header">
-              <span class="b2b-form-badge">ATENDIMENTO B2B CORPORATIVO</span>
-              <h3 class="b2b-form-title">Falar com a Vértice</h3>
+            
+            <!-- 🏷️ Seletor de Perfil Executivo (Segmented Control Premium) -->
+            <div class="form-profile-selector">
+              <span class="profile-selector-label">QUERO FALAR COMO:</span>
+              <div class="form-profile-tabs" role="tablist" aria-label="Perfil de Atendimento">
+                <button type="button" class="form-profile-tab is-active" id="tab-btn-empresa" role="tab" aria-selected="true" aria-controls="panel-empresa" data-form-tab="empresa">
+                  <span>🏢 Empresa (Contratar Soluções)</span>
+                </button>
+                <button type="button" class="form-profile-tab" id="tab-btn-candidato" role="tab" aria-selected="false" aria-controls="panel-candidato" data-form-tab="candidato">
+                  <span>💼 Profissional / Candidato</span>
+                </button>
+              </div>
             </div>
 
-            <form class="b2b-form" id="b2b-lead-form" method="POST" action="#">
-              <!-- 🛡️ Proteção Anti-Spam Honeypot (Invisível para Usuários Reais) -->
-              <div style="position: absolute; left: -9999px; top: -9999px; opacity: 0; pointer-events: none;" aria-hidden="true">
-                <input type="text" name="website_url_hp" tabindex="-1" autocomplete="off" value="">
+            <!-- PAINEL 1: EMPRESA (Preservação Integral de Campos & Integração CRM) -->
+            <div class="form-tab-panel is-active" id="panel-empresa" role="tabpanel" aria-labelledby="tab-btn-empresa">
+              <div class="b2b-form-header">
+                <span class="b2b-form-badge">ATENDIMENTO B2B CORPORATIVO</span>
+                <h3 class="b2b-form-title">Falar com a Vértice</h3>
               </div>
 
-              <!-- 🛡️ Metadados Ocultos para Ingestão em CRM / Frappe / Webhook -->
-              <input type="hidden" name="source" value="site_home_v2">
-              <input type="hidden" name="page_url" id="form-field-url" value="">
-              <input type="hidden" name="utm_source" id="form-field-utm-source" value="">
-              <input type="hidden" name="utm_medium" id="form-field-utm-medium" value="">
-              <input type="hidden" name="utm_campaign" id="form-field-utm-campaign" value="">
-              <input type="hidden" name="utm_content" id="form-field-utm-content" value="">
-              <input type="hidden" name="timestamp" id="form-field-timestamp" value="">
+              <form class="b2b-form" id="b2b-lead-form" method="POST" action="#">
+                <!-- 🛡️ Proteção Anti-Spam Honeypot -->
+                <div style="position: absolute; left: -9999px; top: -9999px; opacity: 0; pointer-events: none;" aria-hidden="true">
+                  <input type="text" name="website_url_hp" tabindex="-1" autocomplete="off" value="">
+                </div>
 
-              <div class="b2b-form-fields">
-                <div class="b2b-row-2col">
+                <!-- 🛡️ Metadados Ocultos para Ingestão em CRM / Frappe / Webhook -->
+                <input type="hidden" name="source" value="site_home_v2">
+                <input type="hidden" name="tipo" value="empresa">
+                <input type="hidden" name="page_url" id="form-field-url" value="">
+                <input type="hidden" name="utm_source" id="form-field-utm-source" value="">
+                <input type="hidden" name="utm_medium" id="form-field-utm-medium" value="">
+                <input type="hidden" name="utm_campaign" id="form-field-utm-campaign" value="">
+                <input type="hidden" name="utm_content" id="form-field-utm-content" value="">
+                <input type="hidden" name="timestamp" id="form-field-timestamp" value="">
+
+                <div class="b2b-form-fields">
+                  <div class="b2b-row-2col">
+                    <div class="b2b-field">
+                      <label class="b2b-label" for="lead-nome">Nome Completo <span class="req">*</span></label>
+                      <input type="text" id="lead-nome" name="nome" class="b2b-input" required placeholder="Seu nome">
+                    </div>
+                    <div class="b2b-field">
+                      <label class="b2b-label" for="lead-empresa">Empresa <span class="req">*</span></label>
+                      <input type="text" id="lead-empresa" name="empresa" class="b2b-input" required placeholder="Nome da organização">
+                    </div>
+                  </div>
+
+                  <div class="b2b-row-2col">
+                    <div class="b2b-field">
+                      <label class="b2b-label" for="lead-cargo">Cargo <span class="req">*</span></label>
+                      <input type="text" id="lead-cargo" name="cargo" class="b2b-input" required placeholder="Ex: Diretor de RH, CEO">
+                    </div>
+                    <div class="b2b-field">
+                      <label class="b2b-label" for="lead-whatsapp">WhatsApp <span class="req">*</span></label>
+                      <input type="tel" id="lead-whatsapp" name="whatsapp" class="b2b-input" required placeholder="(81) 99999-9999">
+                    </div>
+                  </div>
+
                   <div class="b2b-field">
-                    <label class="b2b-label" for="lead-nome">Nome Completo <span class="req">*</span></label>
-                    <input type="text" id="lead-nome" name="nome" class="b2b-input" required placeholder="Seu nome">
+                    <label class="b2b-label" for="lead-email">E-mail Corporativo <span class="req">*</span></label>
+                    <input type="email" id="lead-email" name="email" class="b2b-input" required placeholder="seuemail@empresa.com.br">
                   </div>
+
                   <div class="b2b-field">
-                    <label class="b2b-label" for="lead-empresa">Empresa <span class="req">*</span></label>
-                    <input type="text" id="lead-empresa" name="empresa" class="b2b-input" required placeholder="Nome da organização">
+                    <label class="b2b-label" for="lead-servico">Como podemos ajudar? <span class="req">*</span></label>
+                    <select id="lead-servico" name="servico" class="b2b-select" required>
+                      <option value="" disabled selected>Selecione a área de interesse...</option>
+                      <option value="Recrutamento & Seleção">Recrutamento & Seleção</option>
+                      <option value="Desenvolvimento de Líderes">Desenvolvimento de Líderes</option>
+                      <option value="Pesquisa de Clima Organizacional">Pesquisa de Clima Organizacional</option>
+                      <option value="Cargos, Salários & Carreiras">Cargos, Salários & Carreiras</option>
+                      <option value="Mapeamento Comportamental">Mapeamento Comportamental</option>
+                      <option value="Outplacement">Outplacement</option>
+                      <option value="Outro">Outro desafio estratégico</option>
+                    </select>
                   </div>
-                </div>
 
-                <div class="b2b-row-2col">
+                  <!-- 🏢 Qualificação Rápida: Porte da Organização -->
                   <div class="b2b-field">
-                    <label class="b2b-label" for="lead-cargo">Cargo <span class="req">*</span></label>
-                    <input type="text" id="lead-cargo" name="cargo" class="b2b-input" required placeholder="Ex: Diretor de RH, CEO">
+                    <label class="b2b-label">Porte da Organização</label>
+                    <div class="company-size-pills">
+                      <label class="size-pill">
+                        <input type="radio" name="porte" value="Até 50 colaboradores">
+                        <span>Até 50 colab.</span>
+                      </label>
+                      <label class="size-pill">
+                        <input type="radio" name="porte" value="50 a 200 colaboradores" checked>
+                        <span>50 a 200</span>
+                      </label>
+                      <label class="size-pill">
+                        <input type="radio" name="porte" value="200 a 1.000 colaboradores">
+                        <span>200 a 1.000</span>
+                      </label>
+                      <label class="size-pill">
+                        <input type="radio" name="porte" value="+1.000 colaboradores">
+                        <span>+1.000 colab.</span>
+                      </label>
+                    </div>
                   </div>
+
                   <div class="b2b-field">
-                    <label class="b2b-label" for="lead-whatsapp">WhatsApp <span class="req">*</span></label>
-                    <input type="tel" id="lead-whatsapp" name="whatsapp" class="b2b-input" required placeholder="(81) 99999-9999">
+                    <label class="b2b-label" for="lead-desafio">Conte um pouco sobre o desafio</label>
+                    <textarea id="lead-desafio" name="desafio" class="b2b-textarea" rows="3" placeholder="Qual o momento da sua empresa e como podemos colaborar?"></textarea>
                   </div>
+
+                  <button type="submit" class="btn btn-primary b2b-submit-btn" id="b2b-submit-btn">
+                    <span class="btn-text">FALAR COM A VÉRTICE</span>
+                    <span class="arrow">→</span>
+                  </button>
+
+                  <!-- 🔒 Aviso de Governança & LGPD -->
+                  <p class="b2b-privacy-note">
+                    Seus dados corporativos são protegidos pela LGPD e utilizados unicamente para este contato.
+                    <button type="button" class="b2b-privacy-link" id="form-link-privacy">Diretrizes de Privacidade</button>.
+                  </p>
                 </div>
 
-                <div class="b2b-field">
-                  <label class="b2b-label" for="lead-email">E-mail Corporativo <span class="req">*</span></label>
-                  <input type="email" id="lead-email" name="email" class="b2b-input" required placeholder="seuemail@empresa.com.br">
+                <!-- Fallback Direct WhatsApp -->
+                <div class="b2b-fallback-wrapper">
+                  <span>Prefere falar diretamente?</span>
+                  <a href="https://wa.me/5581999997566?text=Ol%C3%A1!%20Vim%20pelo%20site%20da%20V%C3%A9rtice%20e%20gostaria%20de%20conversar%20sobre%20as%20solu%C3%A7%C3%B5es." target="_blank" rel="noopener noreferrer" class="b2b-fallback-link">
+                    WhatsApp <span class="arrow">→</span>
+                  </a>
                 </div>
+              </form>
 
-                <div class="b2b-field">
-                  <label class="b2b-label" for="lead-servico">Como podemos ajudar? <span class="req">*</span></label>
-                  <select id="lead-servico" name="servico" class="b2b-select" required>
-                    <option value="" disabled selected>Selecione a área de interesse...</option>
-                    <option value="Recrutamento & Seleção">Recrutamento & Seleção</option>
-                    <option value="Desenvolvimento de Líderes">Desenvolvimento de Líderes</option>
-                    <option value="Pesquisa de Clima Organizacional">Pesquisa de Clima Organizacional</option>
-                    <option value="Cargos, Salários & Carreiras">Cargos, Salários & Carreiras</option>
-                    <option value="Mapeamento Comportamental">Mapeamento Comportamental</option>
-                    <option value="Outplacement">Outplacement</option>
-                    <option value="Outro">Outro desafio estratégico</option>
-                  </select>
+              <!-- Estado de Erro Amigável Dinâmico Empresa -->
+              <div class="b2b-form-error" id="b2b-form-error" style="display: none;" role="alert">
+                <div class="b2b-error-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
                 </div>
-
-                <!-- 🏢 Qualificação Rápida: Porte da Organização -->
-                <div class="b2b-field">
-                  <label class="b2b-label">Porte da Organização</label>
-                  <div class="company-size-pills">
-                    <label class="size-pill">
-                      <input type="radio" name="porte" value="Até 50 colaboradores">
-                      <span>Até 50 colab.</span>
-                    </label>
-                    <label class="size-pill">
-                      <input type="radio" name="porte" value="50 a 200 colaboradores" checked>
-                      <span>50 a 200</span>
-                    </label>
-                    <label class="size-pill">
-                      <input type="radio" name="porte" value="200 a 1.000 colaboradores">
-                      <span>200 a 1.000</span>
-                    </label>
-                    <label class="size-pill">
-                      <input type="radio" name="porte" value="+1.000 colaboradores">
-                      <span>+1.000 colab.</span>
-                    </label>
-                  </div>
+                <div class="b2b-error-content">
+                  <p class="b2b-error-msg">Não foi possível enviar sua solicitação agora. Tente novamente em instantes ou fale conosco pelo WhatsApp.</p>
+                  <a href="https://wa.me/5581999997566?text=Ol%C3%A1!%20Tentei%20enviar%20o%20formul%C3%A1rio%20no%20site%20da%20V%C3%A9rtice%20e%20gostaria%20de%20conversar." target="_blank" rel="noopener noreferrer" class="b2b-error-whatsapp-btn">
+                    Falar no WhatsApp agora <span class="arrow">→</span>
+                  </a>
                 </div>
+              </div>
 
-                <div class="b2b-field">
-                  <label class="b2b-label" for="lead-desafio">Conte um pouco sobre o desafio</label>
-                  <textarea id="lead-desafio" name="desafio" class="b2b-textarea" rows="3" placeholder="Qual o momento da sua empresa e como podemos colaborar?"></textarea>
+              <!-- Estado de Sucesso Dinâmico Empresa -->
+              <div class="b2b-form-success" id="b2b-form-success">
+                <div class="b2b-success-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                 </div>
-
-                <button type="submit" class="btn btn-primary b2b-submit-btn" id="b2b-submit-btn">
-                  <span class="btn-text">FALAR COM A VÉRTICE</span>
-                  <span class="arrow">→</span>
-                </button>
-
-                <!-- 🔒 Aviso de Governança & LGPD -->
-                <p class="b2b-privacy-note">
-                  Seus dados corporativos são protegidos pela LGPD e utilizados unicamente para este contato.
-                  <button type="button" class="b2b-privacy-link" id="form-link-privacy">Diretrizes de Privacidade</button>.
+                <h4 class="b2b-success-title">Mensagem Recebida com Sucesso</h4>
+                <p class="b2b-success-desc">
+                  Obrigado pelo contato. Um dos consultores executivos da Vértice entrará em contato em breve para compreender seu desafio e agendar uma reunião estratégica.
                 </p>
               </div>
+            </div>
 
-              <!-- Fallback Direct WhatsApp -->
-              <div class="b2b-fallback-wrapper">
-                <span>Prefere falar diretamente?</span>
-                <a href="https://wa.me/5581999997566?text=Ol%C3%A1!%20Vim%20pelo%20site%20da%20V%C3%A9rtice%20e%20gostaria%20de%20conversar%20sobre%20as%20solu%C3%A7%C3%B5es." target="_blank" rel="noopener noreferrer" class="b2b-fallback-link">
-                  WhatsApp <span class="arrow">→</span>
-                </a>
+            <!-- PAINEL 2: CANDIDATO (Nova Experiência Dedicada para Talentos) -->
+            <div class="form-tab-panel" id="panel-candidato" role="tabpanel" aria-labelledby="tab-btn-candidato">
+              <div class="b2b-form-header">
+                <span class="b2b-form-badge">BANCO DE TALENTOS & OPORTUNIDADES</span>
+                <h3 class="b2b-form-title">Cadastrar Perfil Profissional</h3>
               </div>
-            </form>
 
-            <!-- Estado de Erro Amigável Dinâmico (Sem perder dados preenchidos) -->
-            <div class="b2b-form-error" id="b2b-form-error" style="display: none;" role="alert">
-              <div class="b2b-error-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+              <form class="b2b-form" id="candidate-lead-form" method="POST" action="#">
+                <!-- 🛡️ Proteção Anti-Spam Honeypot -->
+                <div style="position: absolute; left: -9999px; top: -9999px; opacity: 0; pointer-events: none;" aria-hidden="true">
+                  <input type="text" name="website_url_hp" tabindex="-1" autocomplete="off" value="">
+                </div>
+
+                <!-- 🛡️ Metadados Ocultos -->
+                <input type="hidden" name="source" value="site_talentos_v2">
+                <input type="hidden" name="tipo" value="candidato">
+                <input type="hidden" name="page_url" id="candidate-field-url" value="">
+                <input type="hidden" name="utm_source" id="candidate-field-utm-source" value="">
+                <input type="hidden" name="utm_medium" id="candidate-field-utm-medium" value="">
+                <input type="hidden" name="utm_campaign" id="candidate-field-utm-campaign" value="">
+                <input type="hidden" name="timestamp" id="candidate-field-timestamp" value="">
+
+                <div class="b2b-form-fields">
+                  <div class="b2b-row-2col">
+                    <div class="b2b-field">
+                      <label class="b2b-label" for="candidate-nome">Nome Completo <span class="req">*</span></label>
+                      <input type="text" id="candidate-nome" name="nome" class="b2b-input" required placeholder="Seu nome completo">
+                    </div>
+                    <div class="b2b-field">
+                      <label class="b2b-label" for="candidate-whatsapp">WhatsApp <span class="req">*</span></label>
+                      <input type="tel" id="candidate-whatsapp" name="whatsapp" class="b2b-input" required placeholder="(81) 99999-9999">
+                    </div>
+                  </div>
+
+                  <div class="b2b-row-2col">
+                    <div class="b2b-field">
+                      <label class="b2b-label" for="candidate-email">E-mail Pessoal / Profissional <span class="req">*</span></label>
+                      <input type="email" id="candidate-email" name="email" class="b2b-input" required placeholder="seuemail@exemplo.com">
+                    </div>
+                    <div class="b2b-field">
+                      <label class="b2b-label" for="candidate-cidade">Cidade / UF</label>
+                      <input type="text" id="candidate-cidade" name="cidade" class="b2b-input" placeholder="Ex: Recife / PE">
+                    </div>
+                  </div>
+
+                  <div class="b2b-row-2col">
+                    <div class="b2b-field">
+                      <label class="b2b-label" for="candidate-area">Área Principal de Atuação <span class="req">*</span></label>
+                      <select id="candidate-area" name="area_atuacao" class="b2b-select" required>
+                        <option value="" disabled selected>Selecione sua área...</option>
+                        <option value="Recrutamento & Seleção / RH">Recursos Humanos / DHO / R&S</option>
+                        <option value="Comercial & Vendas">Comercial, Vendas & Novos Negócios</option>
+                        <option value="Financeiro & Controladoria">Financeiro, Controladoria & Fiscal</option>
+                        <option value="Operações & Logística">Operações, Suprimentos & Logística</option>
+                        <option value="Tecnologia & Dados">Tecnologia, Produto & Dados</option>
+                        <option value="Engenharia & Projetos">Engenharia, Qualidade & Projetos</option>
+                        <option value="Gestão Executiva / C-Level">Diretoria & Liderança Executiva</option>
+                        <option value="Outra Área">Outra especialidade corporativa</option>
+                      </select>
+                    </div>
+                    <div class="b2b-field">
+                      <label class="b2b-label" for="candidate-cargo">Cargo Atual / Objetivo</label>
+                      <input type="text" id="candidate-cargo" name="cargo" class="b2b-input" placeholder="Ex: Gerente Comercial, Analista Sênior">
+                    </div>
+                  </div>
+
+                  <div class="b2b-field">
+                    <label class="b2b-label" for="candidate-linkedin">Perfil no LinkedIn ou Link do Portfólio</label>
+                    <input type="url" id="candidate-linkedin" name="linkedin" class="b2b-input" placeholder="https://www.linkedin.com/in/seu-perfil">
+                  </div>
+
+                  <div class="b2b-field">
+                    <label class="b2b-label" for="candidate-apresentacao">Resumo das Suas Competências & Interesses</label>
+                    <textarea id="candidate-apresentacao" name="mensagem" class="b2b-textarea" rows="3" placeholder="Conte brevemente sobre sua formação, diferenciais e o momento da sua trajetória profissional."></textarea>
+                  </div>
+
+                  <!-- ℹ️ Aviso Transparente sobre Upload de Currículo -->
+                  <div class="form-notice-box">
+                    <strong>Informação sobre Anexos:</strong> A submissão direta de arquivos em anexo (.pdf/.doc) será integrada à nova plataforma digital de R&S em breve. Por enquanto, utilize o campo de LinkedIn e o resumo acima para triagem imediata pela nossa equipe.
+                  </div>
+
+                  <button type="submit" class="btn btn-primary b2b-submit-btn" id="candidate-submit-btn">
+                    <span class="btn-text">CADASTRAR MEU PERFIL</span>
+                    <span class="arrow">→</span>
+                  </button>
+
+                  <p class="b2b-privacy-note">
+                    Seus dados profissionais são tratados com total sigilo nos termos da LGPD.
+                  </p>
+                </div>
+
+                <!-- Fallback Direct WhatsApp R&S -->
+                <div class="b2b-fallback-wrapper">
+                  <span>Dúvidas sobre o banco de talentos?</span>
+                  <a href="https://wa.me/5581999997566?text=Ol%C3%A1!%20Sou%20candidato%20e%20gostaria%20de%20informa%C3%A7%C3%B5es%20sobre%20o%20banco%20de%20talentos%20da%20V%C3%A9rtice." target="_blank" rel="noopener noreferrer" class="b2b-fallback-link">
+                    WhatsApp R&S <span class="arrow">→</span>
+                  </a>
+                </div>
+              </form>
+
+              <!-- Estado de Erro Candidato -->
+              <div class="b2b-form-error" id="candidate-form-error" style="display: none;" role="alert">
+                <div class="b2b-error-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                </div>
+                <div class="b2b-error-content">
+                  <p class="b2b-error-msg">Não foi possível processar o cadastro neste instante. Fale diretamente com nossa equipe de R&S pelo WhatsApp.</p>
+                  <a href="https://wa.me/5581999997566?text=Ol%C3%A1!%20Tentei%20cadastrar%20meu%20perfil%20no%20site%20da%20V%C3%A9rtice%20e%20gostaria%20de%20enviar%20minhas%20informa%C3%A7%C3%B5es." target="_blank" rel="noopener noreferrer" class="b2b-error-whatsapp-btn">
+                    Falar com R&S no WhatsApp <span class="arrow">→</span>
+                  </a>
+                </div>
               </div>
-              <div class="b2b-error-content">
-                <p class="b2b-error-msg">Não foi possível enviar sua solicitação agora. Tente novamente em instantes ou fale conosco pelo WhatsApp.</p>
-                <a href="https://wa.me/5581999997566?text=Ol%C3%A1!%20Tentei%20enviar%20o%20formul%C3%A1rio%20no%20site%20da%20V%C3%A9rtice%20e%20gostaria%20de%20conversar." target="_blank" rel="noopener noreferrer" class="b2b-error-whatsapp-btn">
-                  Falar no WhatsApp agora <span class="arrow">→</span>
-                </a>
+
+              <!-- Estado de Sucesso Candidato -->
+              <div class="b2b-form-success" id="candidate-form-success">
+                <div class="b2b-success-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div>
+                <h4 class="b2b-success-title">Perfil Cadastrado com Sucesso</h4>
+                <p class="b2b-success-desc">
+                  Recebemos suas informações profissionais em nosso banco de talentos. Havendo oportunidades compatíveis com a sua trajetória e competências, nossos consultores entrarão em contato.
+                </p>
               </div>
             </div>
 
-            <!-- Estado de Sucesso Dinâmico -->
-            <div class="b2b-form-success" id="b2b-form-success">
-              <div class="b2b-success-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-              </div>
-              <h4 class="b2b-success-title">Mensagem Recebida com Sucesso</h4>
-              <p class="b2b-success-desc">
-                Obrigado pelo contato. Um dos consultores executivos da Vértice entrará em contato em breve para compreender seu desafio e agendar uma reunião estratégica.
-              </p>
-            </div>
           </div>
         </div>
 
@@ -1093,7 +1530,7 @@
     <div class="container">
       <div class="footer-main-grid">
         <div class="footer-brand-col">
-          <img src="assets/logos/logo-cortada.png" alt="Vértice — Pessoas & Estratégia" class="footer-logo" width="160" height="54">
+          <img src="assets/logos/logo-cortada.png" alt="Vértice — Pessoas & Estratégia" class="footer-logo" width="160" height="54" data-logo-variant="light-bg">
           <p class="footer-tagline">
             Estratégia de pessoas conectada aos objetivos reais do negócio.
           </p>
@@ -1117,9 +1554,11 @@
             <li><a href="#essencia" class="footer-link">Nossa Essência</a></li>
             <li><a href="#metodologia" class="footer-link">Como atuamos</a></li>
             <li><a href="#case-tramontina" class="footer-link">Cases de Sucesso</a></li>
+            <li><a href="#depoimentos" class="footer-link">Depoimentos</a></li>
             <li><a href="#quem-somos" class="footer-link">Quem somos</a></li>
             <li><a href="#insights" class="footer-link">Insights & Artigos</a></li>
             <li><a href="#talentos" class="footer-link">Banco de Talentos</a></li>
+            <li><a href="#faq" class="footer-link">Perguntas Frequentes (FAQ)</a></li>
           </ul>
         </div>
 

@@ -7,12 +7,20 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+  // 🎨 Inicialização Imediata do Sistema Multi-Tema
+  initThemeSwitcher();
+
   initStickyHeader();
   initMobileMenu();
   initScrollSpy();
   initSolucoesAccordion();
   initScrollAnimations();
   initB2BLeadForm();
+  initCandidateLeadForm();
+  initFormProfileTabs();
+  initCtaRouting();
+  initFaqAccordion();
+  initTestimonials();
   initSmoothScroll();
   initInsightsReader();
   // 🚀 Rodada de Otimização & UX Elite (16 Itens)
@@ -165,11 +173,12 @@ function initSolucoesAccordion() {
  * 5. Sistema de Motion & Revelação Editorial (IntersectionObserver)
  */
 function initScrollAnimations() {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || urlParams.has('section') || urlParams.has('reveal')) {
     document.querySelectorAll('.reveal-init, .reveal-fade, .reveal-line-h').forEach(el => {
       el.classList.add('is-revealed');
     });
-    return;
+    if (urlParams.has('section') || urlParams.has('reveal')) return;
   }
 
   const targets = document.querySelectorAll('.reveal-init, .reveal-fade, .reveal-line-h');
@@ -564,56 +573,60 @@ function initMagneticButtons() {
 }
 
 /**
- * 13. Máscara Dinâmica de Telefone / WhatsApp
+ * 13. Máscara Dinâmica de Telefone / WhatsApp (Empresa e Candidato)
  */
 function initPhoneMask() {
-  const telInput = document.getElementById('lead-whatsapp');
-  if (!telInput) return;
+  const telInputs = document.querySelectorAll('#lead-whatsapp, #candidate-whatsapp');
+  if (!telInputs.length) return;
 
-  telInput.addEventListener('input', (e) => {
-    let val = e.target.value.replace(/\D/g, '');
-    if (val.length > 11) val = val.substring(0, 11);
+  telInputs.forEach(telInput => {
+    telInput.addEventListener('input', (e) => {
+      let val = e.target.value.replace(/\D/g, '');
+      if (val.length > 11) val = val.substring(0, 11);
 
-    if (val.length > 6) {
-      val = `(${val.substring(0, 2)}) ${val.substring(2, 7)}-${val.substring(7)}`;
-    } else if (val.length > 2) {
-      val = `(${val.substring(0, 2)}) ${val.substring(2)}`;
-    } else if (val.length > 0) {
-      val = `(${val}`;
-    }
+      if (val.length > 6) {
+        val = `(${val.substring(0, 2)}) ${val.substring(2, 7)}-${val.substring(7)}`;
+      } else if (val.length > 2) {
+        val = `(${val.substring(0, 2)}) ${val.substring(2)}`;
+      } else if (val.length > 0) {
+        val = `(${val}`;
+      }
 
-    e.target.value = val;
+      e.target.value = val;
+    });
   });
 }
 
 /**
- * 14. Feedback Tátil de Validação nos Inputs
+ * 14. Feedback Tátil de Validação nos Inputs (Empresa e Candidato)
  */
 function initFormValidationFeedback() {
-  const form = document.getElementById('b2b-lead-form');
-  if (!form) return;
+  const forms = document.querySelectorAll('#b2b-lead-form, #candidate-lead-form');
+  if (!forms.length) return;
 
-  const inputs = form.querySelectorAll('.b2b-input, .b2b-select');
+  forms.forEach(form => {
+    const inputs = form.querySelectorAll('.b2b-input, .b2b-select');
 
-  inputs.forEach(input => {
-    const validate = () => {
-      if (input.type === 'email') {
-        const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value.trim());
-        input.classList.toggle('is-valid', isValid);
-        input.classList.toggle('is-invalid', input.value.trim().length > 3 && !isValid);
-      } else if (input.id === 'lead-whatsapp') {
-        const digits = input.value.replace(/\D/g, '');
-        const isValid = digits.length >= 10;
-        input.classList.toggle('is-valid', isValid);
-        input.classList.toggle('is-invalid', digits.length > 0 && digits.length < 10);
-      } else if (input.hasAttribute('required')) {
-        const isValid = input.value.trim().length >= 2;
-        input.classList.toggle('is-valid', isValid);
-      }
-    };
+    inputs.forEach(input => {
+      const validate = () => {
+        if (input.type === 'email') {
+          const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value.trim());
+          input.classList.toggle('is-valid', isValid);
+          input.classList.toggle('is-invalid', input.value.trim().length > 3 && !isValid);
+        } else if (input.id === 'lead-whatsapp' || input.id === 'candidate-whatsapp') {
+          const digits = input.value.replace(/\D/g, '');
+          const isValid = digits.length >= 10;
+          input.classList.toggle('is-valid', isValid);
+          input.classList.toggle('is-invalid', digits.length > 0 && digits.length < 10);
+        } else if (input.hasAttribute('required')) {
+          const isValid = input.value.trim().length >= 2;
+          input.classList.toggle('is-valid', isValid);
+        }
+      };
 
-    input.addEventListener('input', validate);
-    input.addEventListener('blur', validate);
+      input.addEventListener('input', validate);
+      input.addEventListener('blur', validate);
+    });
   });
 }
 
@@ -839,3 +852,384 @@ function initLegalModal() {
     }
   });
 }
+
+/**
+ * ==========================================================================
+ * MÓDULOS DE IDENTIDADE VISUAL & FEEDBACK MATHEUS
+ * 1. Multi-Tema (Atual / Azul-Marinho / Verde-Petróleo) + Logos Dinâmicas
+ * 2. Segmented Tabs Formulário: Empresa x Candidato
+ * 3. Ingestão e Validação do Formulário Candidato (Talentos)
+ * 4. Roteamento Inteligente de CTAs com Pré-Seleção de Perfil
+ * 5. Accordion Moderno e Acessível de FAQ com Filtros
+ * 6. Depoimentos Editoriais Estruturados
+ * ==========================================================================
+ */
+
+const THEME_STORAGE_KEY = 'vertice_theme';
+const THEME_LOGOS = {
+  current: {
+    'light-bg': 'assets/logos/logo-cortada.png',
+    'dark-bg': 'assets/logos/logo-negativa-branca.png'
+  },
+  navy: {
+    'light-bg': 'assets/logos/logo-navy-dark.png',
+    'dark-bg': 'assets/logos/logo-navy-light.png'
+  },
+  petrol: {
+    'light-bg': 'assets/logos/logo-petrol-dark.png',
+    'dark-bg': 'assets/logos/logo-petrol-light.png'
+  }
+};
+
+/**
+ * Aplica um tema globalmente no documento HTML e sincroniza componentes
+ */
+function applyTheme(theme) {
+  if (!['current', 'navy', 'petrol'].includes(theme)) {
+    theme = 'current';
+  }
+
+  document.documentElement.setAttribute('data-theme', theme);
+  try {
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+  } catch (err) {
+    // LocalStorage indisponível em navegação restrita
+  }
+
+  // Sincronizar todos os seletores de tema (desktop e mobile)
+  const buttons = document.querySelectorAll('.theme-dot-btn');
+  buttons.forEach(btn => {
+    const btnTheme = btn.getAttribute('data-theme-value');
+    const isActive = btnTheme === theme;
+    btn.classList.toggle('is-active', isActive);
+    btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+  });
+
+  // Atualizar logos dinâmicas de acordo com o tema e variante de fundo
+  const logoElements = document.querySelectorAll('img[data-logo-variant]');
+  logoElements.forEach(img => {
+    const variant = img.getAttribute('data-logo-variant') || 'light-bg';
+    if (THEME_LOGOS[theme] && THEME_LOGOS[theme][variant]) {
+      img.src = THEME_LOGOS[theme][variant];
+    }
+  });
+
+  // Disparar evento para scripts ou componentes que escutem troca de tema
+  window.dispatchEvent(new CustomEvent('vertice:theme_changed', { detail: { theme } }));
+}
+
+/**
+ * Inicializador dos seletores de tema
+ */
+function initThemeSwitcher() {
+  let initialTheme = 'current';
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const urlTheme = params.get('theme') || params.get('tema');
+    const stored = localStorage.getItem(THEME_STORAGE_KEY);
+    if (urlTheme && ['current', 'navy', 'petrol'].includes(urlTheme)) {
+      initialTheme = urlTheme;
+    } else if (stored && ['current', 'navy', 'petrol'].includes(stored)) {
+      initialTheme = stored;
+    }
+  } catch (err) {}
+
+  applyTheme(initialTheme);
+
+  const themeButtons = document.querySelectorAll('.theme-dot-btn');
+  themeButtons.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const selectedTheme = btn.getAttribute('data-theme-value');
+      if (selectedTheme) {
+        applyTheme(selectedTheme);
+      }
+    });
+  });
+}
+
+/**
+ * Alternância de Perfil do Formulário (Empresa x Candidato)
+ */
+function setFormProfile(profile) {
+  const isCandidate = profile === 'candidato';
+
+  const tabEmpresa = document.getElementById('tab-btn-empresa');
+  const tabCandidato = document.getElementById('tab-btn-candidato');
+  const panelEmpresa = document.getElementById('panel-empresa');
+  const panelCandidato = document.getElementById('panel-candidato');
+
+  if (tabEmpresa && tabCandidato && panelEmpresa && panelCandidato) {
+    if (isCandidate) {
+      tabCandidato.classList.add('is-active');
+      tabCandidato.setAttribute('aria-selected', 'true');
+      tabEmpresa.classList.remove('is-active');
+      tabEmpresa.setAttribute('aria-selected', 'false');
+
+      panelCandidato.classList.add('is-active');
+      panelCandidato.setAttribute('aria-hidden', 'false');
+      panelEmpresa.classList.remove('is-active');
+      panelEmpresa.setAttribute('aria-hidden', 'true');
+    } else {
+      tabEmpresa.classList.add('is-active');
+      tabEmpresa.setAttribute('aria-selected', 'true');
+      tabCandidato.classList.remove('is-active');
+      tabCandidato.setAttribute('aria-selected', 'false');
+
+      panelEmpresa.classList.add('is-active');
+      panelEmpresa.setAttribute('aria-hidden', 'false');
+      panelCandidato.classList.remove('is-active');
+      panelCandidato.setAttribute('aria-hidden', 'true');
+    }
+  }
+}
+
+function initFormProfileTabs() {
+  const tabEmpresa = document.getElementById('tab-btn-empresa');
+  const tabCandidato = document.getElementById('tab-btn-candidato');
+
+  if (tabEmpresa) {
+    tabEmpresa.addEventListener('click', () => setFormProfile('empresa'));
+  }
+  if (tabCandidato) {
+    tabCandidato.addEventListener('click', () => setFormProfile('candidato'));
+  }
+}
+
+/**
+ * Formulário de Candidato / Banco de Talentos
+ */
+function initCandidateLeadForm() {
+  const form = document.getElementById('candidate-lead-form');
+  const successBox = document.getElementById('candidate-form-success');
+  const errorBox = document.getElementById('candidate-form-error');
+  const submitBtn = document.getElementById('candidate-submit-btn');
+  const privacyLink = document.getElementById('candidate-link-privacy');
+  if (!form) return;
+
+  if (privacyLink) {
+    privacyLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      const modalPrivacyTrigger = document.getElementById('btn-legal-privacy');
+      if (modalPrivacyTrigger) modalPrivacyTrigger.click();
+    });
+  }
+
+  // Preencher UTMs
+  const urlParams = new URLSearchParams(window.location.search);
+  const fieldUrl = document.getElementById('candidate-field-url');
+  const fieldSource = document.getElementById('candidate-field-utm-source');
+  const fieldMedium = document.getElementById('candidate-field-utm-medium');
+  const fieldCampaign = document.getElementById('candidate-field-utm-campaign');
+  const fieldContent = document.getElementById('candidate-field-utm-content');
+  const fieldTimestamp = document.getElementById('candidate-field-timestamp');
+
+  if (fieldUrl) fieldUrl.value = window.location.href;
+  if (fieldSource) fieldSource.value = urlParams.get('utm_source') || '';
+  if (fieldMedium) fieldMedium.value = urlParams.get('utm_medium') || '';
+  if (fieldCampaign) fieldCampaign.value = urlParams.get('utm_campaign') || '';
+  if (fieldContent) fieldContent.value = urlParams.get('utm_content') || '';
+  if (fieldTimestamp) fieldTimestamp.value = new Date().toISOString();
+
+  let isSubmitting = false;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (isSubmitting) return;
+
+    if (errorBox) errorBox.style.display = 'none';
+
+    const formData = new FormData(form);
+    const payload = Object.fromEntries(formData.entries());
+    payload.landing_page = window.location.href;
+    payload.tipo = 'candidato';
+
+    isSubmitting = true;
+    if (submitBtn) {
+      submitBtn.classList.add('is-loading');
+      submitBtn.disabled = true;
+      const btnText = submitBtn.querySelector('.btn-text');
+      if (btnText) btnText.textContent = 'ENVIANDO CADASTRO...';
+    }
+
+    try {
+      const response = await fetch('/api/lead', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (response.ok && data.success) {
+        form.style.display = 'none';
+        if (errorBox) errorBox.style.display = 'none';
+        if (successBox) {
+          successBox.classList.add('is-visible');
+          successBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        window.dispatchEvent(new CustomEvent('vertice:candidate_submitted', { detail: payload }));
+      } else {
+        throw new Error(data.error || 'crm_unavailable');
+      }
+    } catch (err) {
+      console.warn('[VÉRTICE CANDIDATE FORM] Falha no envio para o CRM:', err.message || err);
+      if (errorBox) {
+        errorBox.style.display = 'flex';
+        errorBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    } finally {
+      isSubmitting = false;
+      if (submitBtn) {
+        submitBtn.classList.remove('is-loading');
+        submitBtn.disabled = false;
+        const btnText = submitBtn.querySelector('.btn-text');
+        if (btnText) btnText.textContent = 'CADASTRAR NO BANCO DE TALENTOS';
+      }
+    }
+  });
+}
+
+/**
+ * Roteamento Inteligente de CTAs (Candidato vs Empresa)
+ */
+function initCtaRouting() {
+  // 1. Interceptar cliques em links/botões com data-form-profile
+  const profileCtas = document.querySelectorAll('[data-form-profile]');
+  profileCtas.forEach(cta => {
+    cta.addEventListener('click', (e) => {
+      const targetProfile = cta.getAttribute('data-form-profile');
+      if (targetProfile) {
+        setFormProfile(targetProfile);
+      }
+      // Se for link para #contato, garantir scroll suave
+      const href = cta.getAttribute('href');
+      if (href && href.startsWith('#contato')) {
+        const contatoSec = document.getElementById('contato');
+        if (contatoSec) {
+          e.preventDefault();
+          contatoSec.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    });
+  });
+
+  // 2. Verificar hash e query params na carga inicial
+  const checkInitialRouting = () => {
+    const hash = window.location.hash.toLowerCase();
+    const searchParams = new URLSearchParams(window.location.search);
+    const tipoParam = searchParams.get('tipo');
+
+    if (hash.includes('candidato') || tipoParam === 'candidato') {
+      setFormProfile('candidato');
+    } else if (hash.includes('empresa') || tipoParam === 'empresa') {
+      setFormProfile('empresa');
+    }
+  };
+
+  checkInitialRouting();
+  window.addEventListener('hashchange', checkInitialRouting);
+}
+
+/**
+ * Accordion de FAQ e Filtros por Categoria
+ */
+function initFaqAccordion() {
+  const faqItems = document.querySelectorAll('.faq-item');
+  const filterBtns = document.querySelectorAll('.faq-filter-btn');
+  if (!faqItems.length) return;
+
+  // Toggle do Accordion (Apenas um aberto por vez para manter sofisticação editorial)
+  faqItems.forEach(item => {
+    const questionBtn = item.querySelector('.faq-question-btn, .faq-question');
+    const answer = item.querySelector('.faq-answer-pane, .faq-answer');
+    if (!questionBtn || !answer) return;
+
+    questionBtn.addEventListener('click', () => {
+      const isOpen = item.classList.contains('is-open') || item.classList.contains('is-active');
+
+      // Fecha todos os itens
+      faqItems.forEach(otherItem => {
+        otherItem.classList.remove('is-open', 'is-active');
+        const otherBtn = otherItem.querySelector('.faq-question-btn, .faq-question');
+        const otherAns = otherItem.querySelector('.faq-answer-pane, .faq-answer');
+        if (otherBtn) otherBtn.setAttribute('aria-expanded', 'false');
+      });
+
+      // Se não estava aberto, abre o clicado
+      if (!isOpen) {
+        item.classList.add('is-open', 'is-active');
+        questionBtn.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+
+  // Filtros de Categoria (Todos, Empresas, Candidatos)
+  if (filterBtns.length) {
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const category = btn.getAttribute('data-faq-filter') || btn.getAttribute('data-category') || 'all';
+
+        filterBtns.forEach(b => {
+          const isActive = b === btn;
+          b.classList.toggle('is-active', isActive);
+          b.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        });
+
+        faqItems.forEach(item => {
+          const itemCat = item.getAttribute('data-faq-category') || item.getAttribute('data-category');
+          if (category === 'all' || itemCat === category) {
+            item.style.display = '';
+          } else {
+            item.style.display = 'none';
+            // Fecha se estava aberto
+            item.classList.remove('is-open', 'is-active');
+            const questionBtn = item.querySelector('.faq-question-btn, .faq-question');
+            if (questionBtn) questionBtn.setAttribute('aria-expanded', 'false');
+          }
+        });
+      });
+    });
+  }
+}
+
+/**
+ * Depoimentos Editoriais Estruturados
+ */
+const VERTICE_TESTIMONIALS_DATA = [
+  {
+    id: 1,
+    company: 'Indústria & Varejo Nacional',
+    role: 'Diretoria de Recursos Humanos',
+    name: 'Depoimento em Homologação Executiva',
+    quote: 'A Vértice conduziu o redesenho de nossa estrutura organizacional e a atração de lideranças com rigor metodológico exemplar, alinhando cultura e resultado estratégico.',
+    metrics: '+42% assertividade em retenção executiva',
+    isPlaceholder: true
+  },
+  {
+    id: 2,
+    company: 'Grupo Agroindustrial',
+    role: 'CEO & Conselho de Administração',
+    name: 'Depoimento em Homologação Executiva',
+    quote: 'O diagnóstico de clima e a arquitetura de remuneração trouxeram clareza e previsibilidade à sucessão de nossas lideranças operacionais.',
+    metrics: 'Alinhamento sucessório e governança de cargos',
+    isPlaceholder: true
+  },
+  {
+    id: 3,
+    company: 'Tecnologia & Serviços Corporativos',
+    role: 'Vice-Presidência de Operações',
+    name: 'Depoimento em Homologação Executiva',
+    quote: 'A precisão na qualificação dos talentos reduziu nosso tempo de contratação e elevou o padrão técnico de nossos times de gestão estratégica.',
+    metrics: 'Redução de 35% no time-to-hire estratégico',
+    isPlaceholder: true
+  }
+];
+
+function initTestimonials() {
+  window.VERTICE_TESTIMONIALS = VERTICE_TESTIMONIALS_DATA;
+}
+

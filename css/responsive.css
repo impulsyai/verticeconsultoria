@@ -678,4 +678,62 @@
   .site-footer {
     padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px));
   }
+
+  /* Depoimentos, FAQ & Formulário Segmentado Mobile */
+  .testimonials-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .testimonial-card {
+    padding: 28px 24px;
+  }
+
+  .testimonial-quote-text {
+    font-size: 1.05rem;
+  }
+
+  .faq-question-btn {
+    padding: 18px 20px;
+  }
+
+  .faq-question-title {
+    font-size: 1.1rem;
+  }
+
+  .faq-answer-pane {
+    padding: 0 20px;
+  }
+
+  .faq-item.is-open .faq-answer-pane {
+    padding: 0 20px 20px 20px;
+  }
+
+  .form-profile-tabs {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .form-profile-tab {
+    padding: 12px 10px;
+    font-size: 0.74rem;
+  }
+
+  .theme-switcher-pill {
+    padding: 3px 6px;
+    gap: 6px;
+  }
+
+  .theme-dot-btn {
+    width: 16px;
+    height: 16px;
+  }
 }
+
+/* Tablet adjustments */
+@media screen and (max-width: 1080px) and (min-width: 769px) {
+  .testimonials-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+

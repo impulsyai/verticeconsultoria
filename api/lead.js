@@ -121,14 +121,12 @@ module.exports = async function handler(req, res) {
     }
 
     // 4. Extração e Normalização de Campos
+    const tipo = String(body.tipo || 'empresa').trim().toLowerCase();
+    const isCandidato = tipo === 'candidato';
+
     const rawName = String(body.nome || body.first_name || '').trim();
-    const rawOrg = String(body.empresa || body.organization || '').trim();
-    const rawJob = String(body.cargo || body.job_title || '').trim();
     const rawPhone = String(body.whatsapp || body.mobile_no || '').trim();
     const rawEmail = String(body.email || '').trim().toLowerCase();
-    const rawService = String(body.servico || body.service_of_interest || '').trim();
-    const rawPorte = String(body.porte || '').trim();
-    const rawChallenge = String(body.desafio || body.challenge || '').trim();
 
     // UTMs & Contexto
     const utmSource = String(body.utm_source || '').trim().slice(0, 140);
@@ -137,58 +135,95 @@ module.exports = async function handler(req, res) {
     const utmContent = String(body.utm_content || '').trim().slice(0, 140);
     const landingPage = String(body.landing_page || body.page_url || '').trim().slice(0, 500);
 
-    // 5. Validação Severa Server-Side
-    // Validação de presença e limites de tamanho
+    // E-mail e Telefone comuns a ambos
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!rawName || rawName.length < 2 || rawName.length > 140) {
       return res.status(400).json({ success: false, error: 'validation_error', message: 'Nome inválido' });
     }
-    if (!rawOrg || rawOrg.length < 2 || rawOrg.length > 140) {
-      return res.status(400).json({ success: false, error: 'validation_error', message: 'Empresa inválida' });
-    }
-    if (!rawJob || rawJob.length < 2 || rawJob.length > 120) {
-      return res.status(400).json({ success: false, error: 'validation_error', message: 'Cargo inválido' });
-    }
-
-    // E-mail válido
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!rawEmail || rawEmail.length > 140 || !emailRegex.test(rawEmail)) {
-      return res.status(400).json({ success: false, error: 'validation_error', message: 'E-mail corporativo inválido' });
+      return res.status(400).json({ success: false, error: 'validation_error', message: 'E-mail inválido' });
     }
-
-    // Telefone / WhatsApp válido (pelo menos 10 dígitos numéricos)
     const phoneDigits = rawPhone.replace(/\D/g, '');
     if (!rawPhone || phoneDigits.length < 10 || rawPhone.length > 30) {
       return res.status(400).json({ success: false, error: 'validation_error', message: 'WhatsApp/telefone inválido' });
     }
 
-    // Serviço na whitelist oficial
-    if (!rawService || !ALLOWED_SERVICES.includes(rawService)) {
-      return res.status(400).json({ success: false, error: 'validation_error', message: 'Serviço de interesse inválido' });
-    }
+    let frappeLeadData;
 
-    // 6. Montagem do Payload para o Frappe CRM DocType 'CRM Lead'
-    let fullChallenge = rawChallenge.slice(0, 2000);
-    if (rawPorte) {
-      const porteLabel = `[Porte da Organização: ${rawPorte.slice(0, 50)}]`;
-      fullChallenge = fullChallenge ? `${fullChallenge}\n\n${porteLabel}` : porteLabel;
-    }
+    if (isCandidato) {
+      // 5A. Validação Específica para Candidato / Banco de Talentos
+      const rawArea = String(body.area_atuacao || '').trim();
+      const rawCidadeUf = String(body.cidade_uf || '').trim().slice(0, 100);
+      const rawCargoObj = String(body.cargo_objetivo || '').trim().slice(0, 140);
+      const rawLinkedin = String(body.linkedin || '').trim().slice(0, 250);
+      const rawApresentacao = String(body.mensagem || '').trim().slice(0, 2000);
 
-    const employeesValue = EMPLOYEES_MAP[rawPorte] || null;
+      if (!rawArea || rawArea.length < 2 || rawArea.length > 140) {
+        return res.status(400).json({ success: false, error: 'validation_error', message: 'Área de atuação obrigatória' });
+      }
 
-    const frappeLeadData = {
-      first_name: rawName,
-      organization: rawOrg,
-      job_title: rawJob,
-      mobile_no: rawPhone,
-      email: rawEmail,
-      service_of_interest: rawService,
-      challenge: fullChallenge,
-      source: 'Site',
-      status: 'NOVO'
-    };
+      const candidateNotes = [
+        `[CADASTRO BANCO DE TALENTOS]`,
+        `Área de Atuação: ${rawArea}`,
+        rawCargoObj ? `Cargo / Objetivo: ${rawCargoObj}` : null,
+        rawCidadeUf ? `Cidade/UF: ${rawCidadeUf}` : null,
+        rawLinkedin ? `LinkedIn: ${rawLinkedin}` : null,
+        rawApresentacao ? `Apresentação:\n${rawApresentacao}` : null,
+        `Nota: Upload de currículo via site será implementado em fase posterior da infraestrutura.`
+      ].filter(Boolean).join('\n\n');
 
-    if (employeesValue) {
-      frappeLeadData.no_of_employees = employeesValue;
+      frappeLeadData = {
+        first_name: rawName,
+        organization: 'Candidato / Banco de Talentos',
+        job_title: rawCargoObj || rawArea,
+        mobile_no: rawPhone,
+        email: rawEmail,
+        service_of_interest: 'Recrutamento & Seleção',
+        challenge: candidateNotes,
+        source: 'Site - Banco de Talentos',
+        status: 'NOVO'
+      };
+    } else {
+      // 5B. Validação Severa Server-Side para Empresa (B2B)
+      const rawOrg = String(body.empresa || body.organization || '').trim();
+      const rawJob = String(body.cargo || body.job_title || '').trim();
+      const rawService = String(body.servico || body.service_of_interest || '').trim();
+      const rawPorte = String(body.porte || '').trim();
+      const rawChallenge = String(body.desafio || body.challenge || '').trim();
+
+      if (!rawOrg || rawOrg.length < 2 || rawOrg.length > 140) {
+        return res.status(400).json({ success: false, error: 'validation_error', message: 'Empresa inválida' });
+      }
+      if (!rawJob || rawJob.length < 2 || rawJob.length > 120) {
+        return res.status(400).json({ success: false, error: 'validation_error', message: 'Cargo inválido' });
+      }
+      if (!rawService || !ALLOWED_SERVICES.includes(rawService)) {
+        return res.status(400).json({ success: false, error: 'validation_error', message: 'Serviço de interesse inválido' });
+      }
+
+      let fullChallenge = rawChallenge.slice(0, 2000);
+      if (rawPorte) {
+        const porteLabel = `[Porte da Organização: ${rawPorte.slice(0, 50)}]`;
+        fullChallenge = fullChallenge ? `${fullChallenge}\n\n${porteLabel}` : porteLabel;
+      }
+
+      const employeesValue = EMPLOYEES_MAP[rawPorte] || null;
+
+      frappeLeadData = {
+        first_name: rawName,
+        organization: rawOrg,
+        job_title: rawJob,
+        mobile_no: rawPhone,
+        email: rawEmail,
+        service_of_interest: rawService,
+        challenge: fullChallenge,
+        source: 'Site',
+        status: 'NOVO'
+      };
+
+      if (employeesValue) {
+        frappeLeadData.no_of_employees = employeesValue;
+      }
     }
     if (utmSource) frappeLeadData.utm_source = utmSource;
     if (utmMedium) frappeLeadData.utm_medium = utmMedium;
