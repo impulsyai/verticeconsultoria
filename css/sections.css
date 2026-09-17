@@ -11,12 +11,10 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 96px;
+  height: 84px;
   background-color: var(--header-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  display: flex;
-  align-items: center;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   z-index: 1005;
   transition: height var(--duration-fast) var(--ease-editorial),
               background-color var(--duration-fast) var(--ease-editorial),
@@ -26,7 +24,7 @@
 }
 
 .site-header.is-sticky {
-  height: 76px;
+  height: 72px;
   background-color: var(--header-bg-sticky);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -34,22 +32,31 @@
   box-shadow: 0 6px 20px rgba(1, 1, 1, 0.05);
 }
 
+.site-header .container {
+  max-width: 1560px;
+  width: 100%;
+  padding: 0 clamp(16px, 2.5vw, 40px);
+}
+
 .header-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  gap: clamp(12px, 1.8vw, 28px);
 }
 
 .header-brand {
   display: flex;
   align-items: center;
   text-decoration: none;
+  flex-shrink: 0;
 }
 
 .header-logo {
-  height: 58px;
+  height: 50px;
   width: auto;
+  max-width: 145px;
   display: block;
   transition: transform var(--duration-fast) var(--ease-editorial),
               height var(--duration-fast) var(--ease-editorial);
@@ -57,7 +64,8 @@
 }
 
 .site-header.is-sticky .header-logo {
-  height: 48px;
+  height: 42px;
+  max-width: 125px;
 }
 
 .header-logo:hover {
@@ -67,17 +75,22 @@
 .header-nav {
   display: flex;
   align-items: center;
-  gap: 36px;
+  justify-content: center;
+  gap: clamp(8px, 1.2vw, 22px);
+  flex: 1 1 auto;
+  margin: 0;
 }
 
 .nav-link {
   font-family: var(--font-body);
-  font-size: 0.88rem;
+  font-size: clamp(0.76rem, 0.82vw, 0.86rem);
   font-weight: 500;
   color: var(--text-primary);
   position: relative;
-  padding: 8px 0;
-  letter-spacing: 0.02em;
+  padding: 6px 2px;
+  letter-spacing: 0.01em;
+  white-space: nowrap !important;
+  flex-shrink: 0;
   transition: color var(--duration-fast) var(--ease-editorial), font-weight var(--duration-fast);
 }
 
@@ -106,13 +119,16 @@
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: clamp(10px, 1.2vw, 18px);
+  flex-shrink: 0;
 }
 
 .header-btn {
-  padding: 13px 26px;
-  font-size: 0.8rem;
-  letter-spacing: 0.08em;
+  padding: 10px 18px;
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  white-space: nowrap !important;
+  flex-shrink: 0;
 }
 
 .mobile-menu-toggle {

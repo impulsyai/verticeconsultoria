@@ -814,14 +814,26 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba(var(--vertice-black), 0.04);
-  background-color: rgba(255, 255, 255, 0.45);
+  background-color: rgba(255, 255, 255, 0.65);
   border: 1px solid var(--border-soft);
-  padding: 4px 8px;
+  padding: 4px 10px;
   border-radius: 999px;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  transition: all var(--duration-fast) var(--ease-editorial);
+  flex-shrink: 0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  transition: border-color var(--duration-fast) var(--ease-editorial),
+              background-color var(--duration-fast) var(--ease-editorial);
+}
+
+.theme-switcher-pill:hover {
+  border-color: var(--border-medium);
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+[data-theme="navy"] .theme-switcher-pill,
+[data-theme="petrol"] .theme-switcher-pill {
+  background-color: rgba(255, 255, 255, 0.75);
 }
 
 .mobile-theme-selector-wrap {
@@ -833,14 +845,14 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 4px;
+    padding: 14px 4px;
     border-top: 1px solid var(--border-soft);
     border-bottom: 1px solid var(--border-soft);
-    margin: 10px 0;
+    margin: 12px 0;
   }
   .mobile-theme-label {
     font-family: var(--font-body);
-    font-size: 0.74rem;
+    font-size: 0.76rem;
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -848,14 +860,10 @@
   }
 }
 
-.theme-switcher-pill:hover {
-  border-color: var(--border-medium);
-}
-
 .theme-dot-btn {
   position: relative;
-  width: 18px;
-  height: 18px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   border: 2px solid transparent;
   padding: 0;
@@ -863,6 +871,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+  background: transparent;
   transition: transform var(--duration-fast) var(--ease-editorial),
               box-shadow var(--duration-fast) var(--ease-editorial),
               border-color var(--duration-fast) var(--ease-editorial);
@@ -872,39 +882,46 @@
 .theme-dot-btn::before {
   content: "";
   display: block;
-  width: 100%;
-  height: 100%;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   transition: transform var(--duration-fast) var(--ease-editorial);
 }
 
-.theme-dot-btn[data-theme-val="current"]::before {
+.theme-dot-btn[data-theme-val="current"]::before,
+.theme-dot-btn[data-theme-value="current"]::before {
   background: #4D1021; /* Vinho Oficial */
 }
 
-.theme-dot-btn[data-theme-val="navy"]::before {
+.theme-dot-btn[data-theme-val="navy"]::before,
+.theme-dot-btn[data-theme-value="navy"]::before {
   background: #17324D; /* Azul-Marinho Oficial */
 }
 
-.theme-dot-btn[data-theme-val="petrol"]::before {
+.theme-dot-btn[data-theme-val="petrol"]::before,
+.theme-dot-btn[data-theme-value="petrol"]::before {
   background: #174A4A; /* Verde-Petróleo Oficial */
 }
 
 .theme-dot-btn:hover {
-  transform: scale(1.22);
+  transform: scale(1.15);
 }
 
 .theme-dot-btn.is-active {
-  transform: scale(1.18);
-  border-color: var(--vertice-black);
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.9), 0 2px 8px rgba(0, 0, 0, 0.2);
+  border-color: var(--text-primary);
+  box-shadow: 0 0 0 2px var(--bg-primary);
+  transform: scale(1.08);
+}
+
+.theme-dot-btn.is-active::before {
+  transform: scale(1.08);
 }
 
 /* Tooltip sofisticada no hover do swatch */
 .theme-dot-btn::after {
   content: attr(data-tooltip);
   position: absolute;
-  bottom: -28px;
+  bottom: -32px;
   left: 50%;
   transform: translateX(-50%) translateY(4px);
   background: var(--vertice-black);
@@ -914,15 +931,16 @@
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  padding: 3px 8px;
+  padding: 4px 8px;
   border-radius: 4px;
   white-space: nowrap;
   pointer-events: none;
   opacity: 0;
   visibility: hidden;
-  transition: all var(--duration-fast) var(--ease-editorial);
+  transition: opacity var(--duration-fast) var(--ease-editorial),
+              transform var(--duration-fast) var(--ease-editorial);
   z-index: 1010;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .theme-dot-btn:hover::after,

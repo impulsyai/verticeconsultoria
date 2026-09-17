@@ -882,9 +882,11 @@ const THEME_LOGOS = {
 };
 
 /**
- * Aplica um tema globalmente no documento HTML e sincroniza componentes
+ * FONTE ÚNICA DE VERDADE: setTheme(theme)
+ * Aplica um tema globalmente no documento HTML, sincroniza componentes,
+ * atualiza logos dinâmicas, sincroniza botões desktop/mobile e persiste no localStorage.
  */
-function applyTheme(theme) {
+function setTheme(theme) {
   if (!['current', 'navy', 'petrol'].includes(theme)) {
     theme = 'current';
   }
@@ -893,16 +895,17 @@ function applyTheme(theme) {
   try {
     localStorage.setItem(THEME_STORAGE_KEY, theme);
   } catch (err) {
-    // LocalStorage indisponível em navegação restrita
+    // LocalStorage indisponível em modo restrito
   }
 
   // Sincronizar todos os seletores de tema (desktop e mobile)
   const buttons = document.querySelectorAll('.theme-dot-btn');
   buttons.forEach(btn => {
-    const btnTheme = btn.getAttribute('data-theme-value');
-    const isActive = btnTheme === theme;
+    const val = btn.getAttribute('data-theme-val') || btn.getAttribute('data-theme-value');
+    const isActive = val === theme;
     btn.classList.toggle('is-active', isActive);
     btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    btn.setAttribute('aria-checked', isActive ? 'true' : 'false');
   });
 
   // Atualizar logos dinâmicas de acordo com o tema e variante de fundo
@@ -918,8 +921,12 @@ function applyTheme(theme) {
   window.dispatchEvent(new CustomEvent('vertice:theme_changed', { detail: { theme } }));
 }
 
+// Aliases globais acessíveis via DevTools e scripts externos
+window.setTheme = setTheme;
+window.applyTheme = setTheme;
+
 /**
- * Inicializador dos seletores de tema
+ * Inicializador dos seletores de tema (Desktop e Mobile)
  */
 function initThemeSwitcher() {
   let initialTheme = 'current';
@@ -934,15 +941,16 @@ function initThemeSwitcher() {
     }
   } catch (err) {}
 
-  applyTheme(initialTheme);
+  setTheme(initialTheme);
 
   const themeButtons = document.querySelectorAll('.theme-dot-btn');
   themeButtons.forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
-      const selectedTheme = btn.getAttribute('data-theme-value');
+      e.stopPropagation();
+      const selectedTheme = btn.getAttribute('data-theme-val') || btn.getAttribute('data-theme-value');
       if (selectedTheme) {
-        applyTheme(selectedTheme);
+        setTheme(selectedTheme);
       }
     });
   });

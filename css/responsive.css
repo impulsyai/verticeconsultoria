@@ -3,6 +3,32 @@
    Adaptações rigorosas para Tablet (1080px, 768px) e Mobile (480px, 360px)
    ========================================================================== */
 
+/* 🖥️ DESKTOP COMPACTO (1081px a 1380px — Garantia Absoluta Zero-Wrap) */
+@media screen and (min-width: 1081px) and (max-width: 1380px) {
+  .site-header .container {
+    padding: 0 20px;
+  }
+  .header-inner {
+    gap: clamp(8px, 1.2vw, 16px);
+  }
+  .header-nav {
+    gap: clamp(6px, 0.9vw, 14px);
+  }
+  .nav-link {
+    font-size: clamp(0.74rem, 0.78vw, 0.82rem);
+    padding: 6px 1px;
+    white-space: nowrap !important;
+  }
+  .header-actions {
+    gap: 8px;
+  }
+  .header-btn {
+    padding: 8px 14px;
+    font-size: 0.74rem;
+    white-space: nowrap !important;
+  }
+}
+
 /* 💻 TABLET & TELAS INTERMEDIÁRIAS (max-width: 1080px) */
 @media screen and (max-width: 1080px) {
   :root {
@@ -253,7 +279,8 @@
     pointer-events: auto;
   }
 
-  .header-actions .header-btn {
+  .header-actions .header-btn,
+  .header-actions .theme-switcher-pill {
     display: none;
   }
 

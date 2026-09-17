@@ -78,27 +78,26 @@
   }
   </script>
 
-  <!-- 🎨 Inicialização Imediata do Tema & Roteamento Visual (Zero Flash / No-FOUC) -->
+  <!-- 🎨 Inicialização Imediata do Tema (Zero Flash / No-FOUC) -->
   <script>
     (function() {
       try {
         var params = new URLSearchParams(window.location.search);
         var urlTheme = params.get('theme') || params.get('tema');
-        var savedTheme = urlTheme || localStorage.getItem('vertice_theme') || 'current';
-        if (['current', 'navy', 'petrol'].indexOf(savedTheme) !== -1) {
-          document.documentElement.setAttribute('data-theme', savedTheme);
-          if (urlTheme) localStorage.setItem('vertice_theme', urlTheme);
-        } else {
-          document.documentElement.setAttribute('data-theme', 'current');
+        var storedTheme = localStorage.getItem('vertice_theme');
+        var themeToApply = 'current';
+        if (urlTheme && ['current', 'navy', 'petrol'].indexOf(urlTheme) !== -1) {
+          themeToApply = urlTheme;
+        } else if (storedTheme && ['current', 'navy', 'petrol'].indexOf(storedTheme) !== -1) {
+          themeToApply = storedTheme;
         }
+        document.documentElement.setAttribute('data-theme', themeToApply);
 
         var targetSec = params.get('section');
         if (targetSec) {
           window.addEventListener('DOMContentLoaded', function() {
-            setTimeout(function() {
-              var el = document.getElementById(targetSec);
-              if (el) el.scrollIntoView({ behavior: 'instant', block: 'start' });
-            }, 50);
+            var el = document.getElementById(targetSec);
+            if (el) el.scrollIntoView({ behavior: 'instant', block: 'start' });
           });
         }
       } catch (e) {}
@@ -116,7 +115,7 @@
   <header class="site-header" id="site-header">
     <div class="container header-inner">
       <a href="#" class="header-brand" aria-label="Vértice — Início">
-        <img src="assets/logos/logo-cortada.png" alt="Vértice — Pessoas & Estratégia" class="header-logo" width="160" height="58" data-logo-variant="light-bg">
+        <img src="assets/logos/logo-cortada.png" alt="Vértice — Pessoas & Estratégia" class="header-logo" width="140" height="52" data-logo-variant="light-bg">
       </a>
 
       <nav class="header-nav" id="header-nav" aria-label="Navegação principal">
@@ -135,9 +134,9 @@
         <div class="mobile-theme-selector-wrap">
           <span class="mobile-theme-label">Identidade Visual:</span>
           <div class="theme-switcher-pill" role="radiogroup" aria-label="Seletor de Identidade Visual Mobile">
-            <button type="button" class="theme-dot-btn is-active" data-theme-val="current" data-tooltip="Atual (Vinho)" aria-label="Tema Atual (Vinho)" aria-checked="true" role="radio"></button>
-            <button type="button" class="theme-dot-btn" data-theme-val="navy" data-tooltip="Azul-Marinho" aria-label="Tema Azul-Marinho" aria-checked="false" role="radio"></button>
-            <button type="button" class="theme-dot-btn" data-theme-val="petrol" data-tooltip="Verde-Petróleo" aria-label="Tema Verde-Petróleo" aria-checked="false" role="radio"></button>
+            <button type="button" class="theme-dot-btn is-active" data-theme-val="current" data-theme-value="current" data-tooltip="Atual (Vinho)" title="Identidade Atual (Vinho)" aria-label="Tema Atual (Vinho)" aria-checked="true" aria-pressed="true" role="radio"></button>
+            <button type="button" class="theme-dot-btn" data-theme-val="navy" data-theme-value="navy" data-tooltip="Azul-Marinho" title="Tema Azul-Marinho" aria-label="Tema Azul-Marinho" aria-checked="false" aria-pressed="false" role="radio"></button>
+            <button type="button" class="theme-dot-btn" data-theme-val="petrol" data-theme-value="petrol" data-tooltip="Verde-Petróleo" title="Tema Verde-Petróleo" aria-label="Tema Verde-Petróleo" aria-checked="false" aria-pressed="false" role="radio"></button>
           </div>
         </div>
 
@@ -152,9 +151,9 @@
       <div class="header-actions">
         <!-- 🎨 Seletor Discreto de Identidade Visual na Navbar (3 Swatches) -->
         <div class="theme-switcher-pill" role="radiogroup" aria-label="Seletor de Identidade Visual">
-          <button type="button" class="theme-dot-btn is-active" data-theme-val="current" data-tooltip="Atual (Vinho)" aria-label="Tema Atual (Vinho)" aria-checked="true" role="radio"></button>
-          <button type="button" class="theme-dot-btn" data-theme-val="navy" data-tooltip="Azul-Marinho" aria-label="Tema Azul-Marinho" aria-checked="false" role="radio"></button>
-          <button type="button" class="theme-dot-btn" data-theme-val="petrol" data-tooltip="Verde-Petróleo" aria-label="Tema Verde-Petróleo" aria-checked="false" role="radio"></button>
+          <button type="button" class="theme-dot-btn is-active" data-theme-val="current" data-theme-value="current" data-tooltip="Atual (Vinho)" title="Identidade Atual (Vinho)" aria-label="Tema Atual (Vinho)" aria-checked="true" aria-pressed="true" role="radio"></button>
+          <button type="button" class="theme-dot-btn" data-theme-val="navy" data-theme-value="navy" data-tooltip="Azul-Marinho" title="Tema Azul-Marinho" aria-label="Tema Azul-Marinho" aria-checked="false" aria-pressed="false" role="radio"></button>
+          <button type="button" class="theme-dot-btn" data-theme-val="petrol" data-theme-value="petrol" data-tooltip="Verde-Petróleo" title="Tema Verde-Petróleo" aria-label="Tema Verde-Petróleo" aria-checked="false" aria-pressed="false" role="radio"></button>
         </div>
 
         <a href="#contato" class="btn btn-primary header-btn" data-form-profile="empresa">

@@ -173,3 +173,35 @@ Foram capturadas 24 capturas de tela completas em alta resolução cobrindo Desk
 1. **Escolha da Identidade:** O site está 100% funcional para apresentar a Matheus as 3 opções lado a lado no navegador sem necessidade de alterar código. Nenhuma decisão permanente foi forçada; o default permanece o tema atual até homologação formal.
 2. **Assets Vetoriais:** Os assets PNG das novas logos foram gerados com corte limpo e canal alfa a partir do artwork oficial. Para produção final após a escolha do tema vencedor, recomenda-se disponibilizar o `.svg` definitivo da versão selecionada.
 3. **Coleta de Depoimentos:** A seção `#depoimentos` está estruturada e homologada visualmente. Quando Matheus recolher os depoimentos reais com clientes (Tramontina, Petribu, ACLF, etc.), basta preencher os objetos no array `VERTICE_TESTIMONIALS_DATA`.
+
+---
+
+### 10. Correção Forense da Navbar e Seletor de Identidade Visual
+
+#### A. Causa Raiz do Bug do Seletor de Tema
+* **Diagnóstico:** O HTML do seletor e o CSS utilizavam o atributo `data-theme-val`, enquanto o manipulador de eventos em `js/main.js` realizava `btn.getAttribute('data-theme-value')`. Como o retorno era `null`, a função `applyTheme` nunca era executada pelo clique do usuário nas bolinhas.
+* **Correção:** Unificação da função como **Fonte Única de Verdade** (`setTheme(theme)` / `window.setTheme`), compatibilização com ambos os atributos (`data-theme-val` e `data-theme-value`), atualização em tempo real de `data-theme`, sincronização de `aria-pressed`, `aria-checked`, classes ativas, persistência em `localStorage` sob chave `vertice_theme` e troca instantânea das logos.
+* **Validação por Clique Real:** Validado via CDP / navegador real com clique do mouse gerando transição imediata para Current, Navy e Petrol, persistência após refresh (F5) e zero erros no console.
+
+#### B. Navbar Descongestionada (Zero Quebra de Linha / Zero Wrap)
+* **Diagnóstico:** A navbar continha 10 links de navegação que quebravam em múltiplas linhas em resoluções desktop padrão (1440x900, 1366x768 e 1280x720), causando sobreposição espacial com o seletor de identidade e esmagamento do CTA principal.
+* **Correção:**
+  * Container do header ampliado para `max-width: 1560px` com paddings dinâmicos `clamp(16px, 2.5vw, 40px)`.
+  * `white-space: nowrap !important;` aplicado a todos os links de navegação e botões do header.
+  * Espaçamento entre links regulado por `clamp(8px, 1.2vw, 22px)` e tipografia fluida `clamp(0.76rem, 0.82vw, 0.86rem)`.
+  * Media queries progressivas adicionadas para desktop compacto (`1081px` a `1380px`), garantindo que 1280x720 e 1366x768 mantenham todos os 10 links rigorosamente em uma única linha com folga espacial.
+  * Seletor de identidade pill isolado como bloco autônomo (`flex-shrink: 0`, gap de 6px, botões circulares de 24px) com anel de foco nítido e discreto no item ativo.
+  * No mobile (`<= 768px`), o seletor da barra superior fica oculto, abrindo espaço limpo para a logo e o botão de menu (hambúrguer/X), com o seletor de identidade perfeitamente acomodado dentro do menu drawer ("IDENTIDADE VISUAL: ● ● ●").
+
+#### C. Novas Evidências Geradas (`C:\dev\vertice-site-review\`)
+* `08_navbar_fixes/`
+  * `01_navbar_current_1440.png` — Navbar Current 1440x900 (1 linha, folga perfeita)
+  * `02_navbar_navy_1440.png` — Navbar Navy 1440x900 (após clique real)
+  * `03_navbar_petrol_1440.png` — Navbar Petrol 1440x900 (após clique real)
+  * `04_navbar_1280.png` — Navbar 1280x720 (10 links rigorosamente em 1 linha)
+  * `05_mobile_theme_switcher.png` — Menu Mobile aberto com seletor de identidade ativo
+* `09_theme_click_validation/`
+  * `01_current.png` — Estado Current inicial
+  * `02_navy_after_click.png` — Estado Navy após clique real
+  * `03_petrol_after_click.png` — Estado Petrol após clique real
+
