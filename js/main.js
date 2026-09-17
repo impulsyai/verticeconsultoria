@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initB2BLeadForm();
   initCandidateLeadForm();
   initFormProfileTabs();
+  initCustomSelects();
   initCtaRouting();
   initFaqAccordion();
   initTestimonials();
@@ -526,19 +527,11 @@ function initParallax() {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || window.innerWidth <= 768) return;
 
   const heroImg = document.querySelector('.hero-backdrop-visual img');
-  const caseImg = document.querySelector('.case-media-wrapper img');
 
   const onScroll = () => {
     const scrollY = window.scrollY;
     if (heroImg && scrollY < window.innerHeight) {
       heroImg.style.transform = `translate3d(0, ${scrollY * 0.1}px, 0)`;
-    }
-    if (caseImg) {
-      const rect = caseImg.getBoundingClientRect();
-      if (rect.top < window.innerHeight && rect.bottom > 0) {
-        const offset = (window.innerHeight - rect.top) * 0.04;
-        caseImg.style.transform = `translate3d(0, -${offset}px, 0)`;
-      }
     }
   };
 
@@ -1169,12 +1162,14 @@ function initFaqAccordion() {
         const otherBtn = otherItem.querySelector('.faq-question-btn, .faq-question');
         const otherAns = otherItem.querySelector('.faq-answer-pane, .faq-answer');
         if (otherBtn) otherBtn.setAttribute('aria-expanded', 'false');
+        if (otherAns) otherAns.style.maxHeight = null;
       });
 
       // Se não estava aberto, abre o clicado
       if (!isOpen) {
         item.classList.add('is-open', 'is-active');
         questionBtn.setAttribute('aria-expanded', 'true');
+        answer.style.maxHeight = (answer.scrollHeight + 60) + 'px';
       }
     });
   });
@@ -1200,7 +1195,9 @@ function initFaqAccordion() {
             // Fecha se estava aberto
             item.classList.remove('is-open', 'is-active');
             const questionBtn = item.querySelector('.faq-question-btn, .faq-question');
+            const otherAns = item.querySelector('.faq-answer-pane, .faq-answer');
             if (questionBtn) questionBtn.setAttribute('aria-expanded', 'false');
+            if (otherAns) otherAns.style.maxHeight = null;
           }
         });
       });
@@ -1244,4 +1241,168 @@ const VERTICE_TESTIMONIALS_DATA = [
 function initTestimonials() {
   window.VERTICE_TESTIMONIALS = VERTICE_TESTIMONIALS_DATA;
 }
+
+/**
+ * 16. Seletor Redondo Customizado (Custom Rounded Select Popover)
+ * Converte selects em menus popover arredondados mantendo total compatibilidade
+ * com submissão de formulário, FormData, validação required e acessibilidade.
+ */
+function initCustomSelects() {
+  const selects = document.querySelectorAll('select.b2b-select');
+  if (!selects.length) return;
+
+  selects.forEach(select => {
+    // Evita duplicidade se já inicializado
+    if (select.closest('.custom-select-wrapper')) return;
+
+    // Cria container wrapper
+    const wrapper = document.createElement('div');
+    wrapper.className = 'custom-select-wrapper';
+    select.parentNode.insertBefore(wrapper, select);
+    wrapper.appendChild(select);
+
+    // Identifica seleção inicial
+    const selectedOption = select.options[select.selectedIndex];
+    const initialText = selectedOption ? selectedOption.textContent : (select.options[0]?.textContent || 'Selecione...');
+    const isPlaceholder = select.selectedIndex <= 0 && select.options[0]?.value === '';
+
+    // Cria Gatilho (Trigger Button)
+    const trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.className = 'custom-select-trigger';
+    trigger.setAttribute('aria-haspopup', 'listbox');
+    trigger.setAttribute('aria-expanded', 'false');
+
+    const textSpan = document.createElement('span');
+    textSpan.className = 'custom-select-text' + (isPlaceholder ? ' custom-select-placeholder' : '');
+    textSpan.textContent = initialText;
+
+    // Chevron SVG
+    const chevronSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    chevronSvg.setAttribute('class', 'custom-select-chevron');
+    chevronSvg.setAttribute('viewBox', '0 0 24 24');
+    chevronSvg.setAttribute('fill', 'none');
+    chevronSvg.setAttribute('stroke', 'currentColor');
+    chevronSvg.setAttribute('stroke-width', '2.2');
+    chevronSvg.setAttribute('stroke-linecap', 'round');
+    chevronSvg.setAttribute('stroke-linejoin', 'round');
+    chevronSvg.setAttribute('aria-hidden', 'true');
+    const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+    polyline.setAttribute('points', '6 9 12 15 18 9');
+    chevronSvg.appendChild(polyline);
+
+    trigger.appendChild(textSpan);
+    trigger.appendChild(chevronSvg);
+    wrapper.appendChild(trigger);
+
+    // Cria Dropdown Popover
+    const dropdown = document.createElement('div');
+    dropdown.className = 'custom-select-dropdown';
+    dropdown.setAttribute('role', 'listbox');
+
+    // Popula opções
+    Array.from(select.options).forEach((opt) => {
+      if (opt.value === '' && opt.disabled) {
+        return; // Pula o placeholder no menu de escolhas
+      }
+
+      const optionDiv = document.createElement('div');
+      optionDiv.className = 'custom-select-option' + (opt.selected ? ' is-selected' : '');
+      optionDiv.setAttribute('role', 'option');
+      optionDiv.setAttribute('data-value', opt.value);
+      optionDiv.textContent = opt.textContent;
+
+      optionDiv.addEventListener('click', (e) => {
+        e.stopPropagation();
+        select.value = opt.value;
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+        select.dispatchEvent(new Event('input', { bubbles: true }));
+
+        textSpan.textContent = opt.textContent;
+        textSpan.classList.remove('custom-select-placeholder');
+
+        dropdown.querySelectorAll('.custom-select-option').forEach(o => o.classList.remove('is-selected'));
+        optionDiv.classList.add('is-selected');
+
+        wrapper.classList.remove('is-open');
+        const parentField = wrapper.closest('.b2b-field');
+        if (parentField) parentField.classList.remove('select-is-open');
+        trigger.setAttribute('aria-expanded', 'false');
+        trigger.focus();
+      });
+
+      dropdown.appendChild(optionDiv);
+    });
+
+    wrapper.appendChild(dropdown);
+
+    // Toggle de abertura
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = wrapper.classList.contains('is-open');
+
+      // Fecha outros selects abertos
+      document.querySelectorAll('.custom-select-wrapper.is-open').forEach(w => {
+        if (w !== wrapper) {
+          w.classList.remove('is-open');
+          const pf = w.closest('.b2b-field');
+          if (pf) pf.classList.remove('select-is-open');
+          const t = w.querySelector('.custom-select-trigger');
+          if (t) t.setAttribute('aria-expanded', 'false');
+        }
+      });
+
+      wrapper.classList.toggle('is-open', !isOpen);
+      const parentField = wrapper.closest('.b2b-field');
+      if (parentField) parentField.classList.toggle('select-is-open', !isOpen);
+      trigger.setAttribute('aria-expanded', !isOpen ? 'true' : 'false');
+    });
+
+    // Sincroniza se o select nativo for alterado programaticamente
+    select.addEventListener('change', () => {
+      const currentOpt = select.options[select.selectedIndex];
+      if (currentOpt) {
+        textSpan.textContent = currentOpt.textContent;
+        if (currentOpt.value === '') {
+          textSpan.classList.add('custom-select-placeholder');
+        } else {
+          textSpan.classList.remove('custom-select-placeholder');
+        }
+        dropdown.querySelectorAll('.custom-select-option').forEach(o => {
+          o.classList.toggle('is-selected', o.getAttribute('data-value') === currentOpt.value);
+        });
+      }
+    });
+  });
+
+  // Fecha dropdowns ao clicar fora
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.custom-select-wrapper')) {
+      document.querySelectorAll('.custom-select-wrapper.is-open').forEach(wrapper => {
+        wrapper.classList.remove('is-open');
+        const pf = wrapper.closest('.b2b-field');
+        if (pf) pf.classList.remove('select-is-open');
+        const trigger = wrapper.querySelector('.custom-select-trigger');
+        if (trigger) trigger.setAttribute('aria-expanded', 'false');
+      });
+    }
+  });
+
+  // Fecha com tecla ESC
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.custom-select-wrapper.is-open').forEach(wrapper => {
+        wrapper.classList.remove('is-open');
+        const pf = wrapper.closest('.b2b-field');
+        if (pf) pf.classList.remove('select-is-open');
+        const trigger = wrapper.querySelector('.custom-select-trigger');
+        if (trigger) {
+          trigger.setAttribute('aria-expanded', 'false');
+          trigger.focus();
+        }
+      });
+    }
+  });
+}
+
 
