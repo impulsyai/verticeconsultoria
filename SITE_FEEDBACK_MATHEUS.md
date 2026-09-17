@@ -242,3 +242,35 @@ Foram capturadas 24 capturas de tela completas em alta resolução cobrindo Desk
   * `05_petrol_dark_section.png` — Seção escura (#solucoes) em tema Petrol
   * `06_mobile_navy.png` — Viewport Mobile (390x844) em tema Navy
   * `07_mobile_petrol.png` — Viewport Mobile (390x844) em tema Petrol
+
+---
+
+### 12. Refinamento de Escala da Logo e Centralização Vertical da Navbar
+
+#### A. Ampliação da Logo Oficial (Presença e Legibilidade)
+* **Diagnóstico:** As matrizes das logos oficiais quadradas (1:1) estavam limitadas a `height: 50px`, resultando em uma área diminuta de apenas 50x50px com muito espaço ocioso no header e dificuldade de leitura da assinatura "PESSOAS & ESTRATÉGIA".
+* **Solução:**
+  * Altura da `.header-logo` ampliada para `72px` no Desktop normal (+44% de altura, mais que o dobro de área visual / +107%).
+  * `max-width: 180px` permitindo expansão natural de largura mantendo a proporção 1:1 original intacta.
+  * No estado sticky (`.is-sticky`), a logo transita suavemente para `56px` (altura do header de `76px`).
+  * No Mobile (`<= 768px`), ajustada para `52px` com o header em `76px`.
+
+#### B. Centralização Vertical Rigorosa (Zero Elementos Colados no Topo)
+* **Diagnóstico:** O container `.site-header .container` e `.header-inner` não possuíam `height: 100%` e o header não atuava como flex container em toda a extensão, fazendo com que o bloco de navegação ficasse ancorado no `top: 0` do header. Isso deixava os links e o botão CTA praticamente colados na barra de leitura / limite superior da janela, com uma faixa vazia assimétrica abaixo deles.
+* **Solução:**
+  * `.site-header` ajustado para `height: 96px`, configurado como `display: flex; align-items: center;`.
+  * `.site-header .container` e `.header-inner` com `height: 100%` e `align-items: center`.
+  * `.header-nav` e `.header-actions` com `height: 100%` e alinhamento vertical rigoroso.
+  * **Resultado Geométrico:**
+    * Margem superior dos links: ~30px | Margem inferior: ~30px (simetria perfeita).
+    * Margem superior do botão CTA: ~26px | Margem inferior: ~27px.
+    * Margem superior do seletor pill: ~30px | Margem inferior: ~31px.
+    * Margem da logo: ~12px superior e ~12px inferior, preenchendo o header com nobreza e dignidade corporativa.
+* **Evidências Geradas (`C:\dev\vertice-site-review\11_navbar_adjustments\`):**
+  * `01_navbar_petrol_1440.png` — Navbar Petrol 1440x900 (logo ampliada e centralização perfeita)
+  * `02_navbar_navy_1440.png` — Navbar Navy 1440x900
+  * `03_navbar_current_1440.png` — Navbar Current 1440x900
+  * `04_navbar_sticky_1440.png` — Navbar Sticky com transição suave
+  * `05_navbar_mobile_390.png` — Navbar Mobile 390x844
+  * `06_navbar_petrol_1280.png` — Navbar em 1280x720 (linha única preservada sem wrap)
+

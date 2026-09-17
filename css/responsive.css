@@ -150,22 +150,22 @@
 
   /* 00. Header & Gaveta Mobile */
   .site-header {
-    height: 72px;
+    height: 76px;
     z-index: 1005;
   }
 
   .site-header.is-sticky {
-    height: 68px;
+    height: 70px;
   }
 
   .header-logo {
-    height: 44px;
+    height: 52px;
   }
 
   /* Dropdown Sheet Parcial (Nítido, 100% legível, estilo Lovable/FNB) */
   .header-nav {
     position: fixed;
-    top: 72px;
+    top: 76px;
     left: 0;
     width: 100%;
     height: auto;
