@@ -752,14 +752,8 @@
     box-sizing: border-box;
   }
 
-  .theme-switcher-pill {
-    padding: 3px 6px;
-    gap: 6px;
-  }
-
-  .theme-dot-btn {
-    width: 16px;
-    height: 16px;
+  .header-actions .theme-switcher-pill {
+    display: none;
   }
 }
 
