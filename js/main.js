@@ -599,28 +599,109 @@ function initFormValidationFeedback() {
   if (!forms.length) return;
 
   forms.forEach(form => {
-    const inputs = form.querySelectorAll('.b2b-input, .b2b-select');
+    form.noValidate = true;
+    const inputs = form.querySelectorAll('.b2b-input, .b2b-select, .b2b-textarea');
+
+    const getErrorMessage = (input) => {
+      const value = input.value.trim();
+
+      if (input.type === 'file') {
+        const file = input.files && input.files[0];
+        if (file && file.size > 10 * 1024 * 1024) {
+          return 'O currículo deve ter até 10MB.';
+        }
+        return '';
+      }
+
+      if (input.required && !value) {
+        if (input.type === 'email') return 'Informe seu e-mail para continuarmos.';
+        if (input.type === 'tel') return 'Informe um WhatsApp com DDD.';
+        if (input.tagName === 'SELECT') return 'Selecione uma opção.';
+        return 'Preencha este campo.';
+      }
+
+      if (input.type === 'email' && value && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value)) {
+        return 'Digite um e-mail válido, como nome@empresa.com.br.';
+      }
+
+      if ((input.id === 'lead-whatsapp' || input.id === 'candidate-whatsapp') && value) {
+        const digits = value.replace(/\D/g, '');
+        if (digits.length < 10) return 'Digite um WhatsApp válido com DDD (10 ou 11 dígitos).';
+      }
+
+      if (input.type === 'url' && value) {
+        try {
+          const url = new URL(value);
+          if (!['http:', 'https:'].includes(url.protocol)) throw new Error('unsupported_protocol');
+        } catch {
+          return 'Use um link válido, começando por https://.';
+        }
+      }
+
+      if (input.required && value.length < 2) return 'Use pelo menos 2 caracteres.';
+
+      return '';
+    };
+
+    const updateFieldState = (input, message) => {
+      const field = input.closest('.b2b-field');
+      const errorId = input.id ? `${input.id}-error` : '';
+      let errorEl = errorId ? form.querySelector(`#${errorId}`) : null;
+      const baseDescribedBy = input.dataset.baseDescribedby || input.getAttribute('aria-describedby') || '';
+      input.dataset.baseDescribedby = baseDescribedBy;
+
+      if (message) {
+        if (!errorEl) {
+          errorEl = document.createElement('p');
+          errorEl.className = 'b2b-field-error';
+          errorEl.id = errorId;
+          errorEl.setAttribute('role', 'alert');
+          errorEl.dataset.fieldErrorFor = input.id;
+          if (field) field.appendChild(errorEl);
+          else input.insertAdjacentElement('afterend', errorEl);
+        }
+        errorEl.textContent = message;
+        input.classList.add('is-invalid');
+        input.classList.remove('is-valid');
+        input.setAttribute('aria-invalid', 'true');
+        input.setAttribute('aria-describedby', [baseDescribedBy, errorId].filter(Boolean).join(' '));
+        return false;
+      }
+
+      if (errorEl) errorEl.remove();
+      input.classList.remove('is-invalid');
+      input.classList.toggle('is-valid', Boolean(input.value.trim()));
+      input.removeAttribute('aria-invalid');
+      if (baseDescribedBy) input.setAttribute('aria-describedby', baseDescribedBy);
+      else input.removeAttribute('aria-describedby');
+      return true;
+    };
+
+    const validateField = (input) => {
+      input.dataset.touched = 'true';
+      return updateFieldState(input, getErrorMessage(input));
+    };
 
     inputs.forEach(input => {
-      const validate = () => {
-        if (input.type === 'email') {
-          const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value.trim());
-          input.classList.toggle('is-valid', isValid);
-          input.classList.toggle('is-invalid', input.value.trim().length > 3 && !isValid);
-        } else if (input.id === 'lead-whatsapp' || input.id === 'candidate-whatsapp') {
-          const digits = input.value.replace(/\D/g, '');
-          const isValid = digits.length >= 10;
-          input.classList.toggle('is-valid', isValid);
-          input.classList.toggle('is-invalid', digits.length > 0 && digits.length < 10);
-        } else if (input.hasAttribute('required')) {
-          const isValid = input.value.trim().length >= 2;
-          input.classList.toggle('is-valid', isValid);
-        }
-      };
-
-      input.addEventListener('input', validate);
-      input.addEventListener('blur', validate);
+      input.addEventListener('input', () => {
+        if (input.dataset.touched === 'true') validateField(input);
+      });
+      input.addEventListener('change', () => {
+        if (input.dataset.touched === 'true') validateField(input);
+      });
+      input.addEventListener('blur', () => validateField(input));
     });
+
+    // Executa antes do envio assíncrono dos formulários e mostra o erro no campo correto.
+    form.addEventListener('submit', (event) => {
+      const invalidInputs = Array.from(inputs).filter(input => !validateField(input));
+      if (!invalidInputs.length) return;
+
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      invalidInputs[0].focus({ preventScroll: true });
+      invalidInputs[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, true);
   });
 }
 

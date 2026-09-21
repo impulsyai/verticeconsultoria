@@ -622,13 +622,44 @@
 .b2b-input.is-valid,
 .b2b-select.is-valid,
 .b2b-textarea.is-valid {
-  border-color: rgba(77, 16, 33, 0.9);
-  background: rgba(77, 16, 33, 0.06);
+  border-color: rgba(239, 231, 223, 0.16);
+  background: rgba(239, 231, 223, 0.05);
+  box-shadow: none;
 }
 
-.b2b-input.is-invalid {
-  border-color: #d32f2f;
-  background: rgba(211, 47, 47, 0.06);
+.b2b-input.is-invalid,
+.b2b-select.is-invalid,
+.b2b-textarea.is-invalid {
+  border-color: #e06b74;
+  background: rgba(224, 107, 116, 0.08);
+  box-shadow: 0 0 0 3px rgba(224, 107, 116, 0.14);
+}
+
+.b2b-field-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin: 1px 2px 0;
+  color: #f08a94;
+  font-family: var(--font-body);
+  font-size: 0.74rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.b2b-field-error::before {
+  content: '!';
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 15px;
+  width: 15px;
+  height: 15px;
+  margin-top: 1px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font-size: 0.62rem;
+  line-height: 1;
 }
 
 /* --------------------------------------------------------------------------
