@@ -434,6 +434,46 @@
   line-height: 1.6;
 }
 
+.b2b-success-contact {
+  display: flex;
+  max-width: 430px;
+  margin: 22px auto 0;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.b2b-success-contact-copy {
+  margin: 0;
+  color: rgba(239, 231, 223, 0.68);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.btn-whatsapp-success {
+  width: min(100%, 360px);
+  padding: 12px 18px;
+  gap: 9px;
+  border-color: rgba(37, 211, 102, 0.58);
+  background: rgba(37, 211, 102, 0.08);
+  color: #8ee8aa;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  white-space: normal;
+}
+
+.btn-whatsapp-success:hover {
+  border-color: #25d366;
+  background: rgba(37, 211, 102, 0.16);
+  color: #d9ffe4;
+  transform: translateY(-1px);
+}
+
+.btn-whatsapp-success:focus-visible {
+  outline: 2px solid #8ee8aa;
+  outline-offset: 3px;
+}
+
 /* --------------------------------------------------------------------------
    ESTADO DE ERRO DO FORMULÁRIO B2B & NOTA LGPD
    -------------------------------------------------------------------------- */
