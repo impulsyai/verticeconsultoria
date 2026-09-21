@@ -1138,6 +1138,14 @@
   margin-top: 4px;
 }
 
+.b2b-file-help {
+  display: block;
+  margin-top: 6px;
+  color: rgba(239, 231, 223, 0.72);
+  font-size: 0.74rem;
+  line-height: 1.45;
+}
+
 /* --------------------------------------------------------------------------
    ACCORDION DE FAQ (Perguntas Frequentes)
    -------------------------------------------------------------------------- */
@@ -1553,5 +1561,4 @@
   cursor: default;
   pointer-events: none;
 }
-
 

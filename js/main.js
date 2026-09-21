@@ -201,7 +201,7 @@ function initScrollAnimations() {
 }
 
 /**
- * 6. Formulário B2B de Conversão & Ingestão CRM / UTMs
+ * 6. Formulário B2B de Conversão & Ingestão no Hub / UTMs
  */
 function initB2BLeadForm() {
   const form = document.getElementById('b2b-lead-form');
@@ -277,7 +277,8 @@ function initB2BLeadForm() {
       const data = await response.json().catch(() => ({}));
 
       if (response.ok && data.success) {
-        // Confirmação real recebida do CRM
+        // Confirmação real recebida do Hub
+        form.reset();
         form.style.display = 'none';
         if (errorBox) errorBox.style.display = 'none';
         if (successBox) {
@@ -288,10 +289,10 @@ function initB2BLeadForm() {
         // Dispara evento customizado para integrações externas (GA4, Meta Pixel)
         window.dispatchEvent(new CustomEvent('vertice:lead_submitted', { detail: payload }));
       } else {
-        throw new Error(data.error || 'crm_unavailable');
+        throw new Error(data.error || 'hub_unavailable');
       }
     } catch (err) {
-      console.warn('[VÉRTICE LEAD FORM] Falha no envio para o CRM:', err.message || err);
+      console.warn('[VÉRTICE LEAD FORM] Falha no envio para o Hub:', err.message || err);
       if (errorBox) {
         errorBox.style.display = 'flex';
         errorBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -1045,43 +1046,40 @@ function initCandidateLeadForm() {
     if (errorBox) errorBox.style.display = 'none';
 
     const formData = new FormData(form);
-    const payload = Object.fromEntries(formData.entries());
-    payload.landing_page = window.location.href;
-    payload.tipo = 'candidato';
+    formData.set('landing_page', window.location.href);
+    formData.set('tipo', 'candidato');
 
     isSubmitting = true;
     if (submitBtn) {
       submitBtn.classList.add('is-loading');
       submitBtn.disabled = true;
       const btnText = submitBtn.querySelector('.btn-text');
-      if (btnText) btnText.textContent = 'ENVIANDO CADASTRO...';
+      if (btnText) btnText.textContent = 'ENVIANDO DADOS...';
     }
 
     try {
       const response = await fetch('/api/lead', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(payload)
+        headers: { 'Accept': 'application/json' },
+        body: formData
       });
 
       const data = await response.json().catch(() => ({}));
 
       if (response.ok && data.success) {
+        form.reset();
         form.style.display = 'none';
         if (errorBox) errorBox.style.display = 'none';
         if (successBox) {
           successBox.classList.add('is-visible');
           successBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
-        window.dispatchEvent(new CustomEvent('vertice:candidate_submitted', { detail: payload }));
+        window.dispatchEvent(new CustomEvent('vertice:candidate_submitted', { detail: Object.fromEntries(formData.entries()) }));
       } else {
-        throw new Error(data.error || 'crm_unavailable');
+        throw new Error(data.error || 'hub_unavailable');
       }
     } catch (err) {
-      console.warn('[VÉRTICE CANDIDATE FORM] Falha no envio para o CRM:', err.message || err);
+      console.warn('[VÉRTICE CANDIDATE FORM] Falha no envio para o Hub:', err.message || err);
       if (errorBox) {
         errorBox.style.display = 'flex';
         errorBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -1404,5 +1402,3 @@ function initCustomSelects() {
     }
   });
 }
-
-

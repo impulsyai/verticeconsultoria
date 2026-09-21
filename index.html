@@ -1313,7 +1313,7 @@
                   <input type="text" name="website_url_hp" tabindex="-1" autocomplete="off" value="">
                 </div>
 
-                <!-- 🛡️ Metadados Ocultos para Ingestão em CRM / Frappe / Webhook -->
+                <!-- 🛡️ Metadados Ocultos para Ingestão no Hub -->
                 <input type="hidden" name="source" value="site_home_v2">
                 <input type="hidden" name="tipo" value="empresa">
                 <input type="hidden" name="page_url" id="form-field-url" value="">
@@ -1515,9 +1515,10 @@
                     <textarea id="candidate-apresentacao" name="mensagem" class="b2b-textarea" rows="3" placeholder="Conte brevemente sobre sua formação, diferenciais e o momento da sua trajetória profissional."></textarea>
                   </div>
 
-                  <!-- ℹ️ Aviso Transparente sobre Upload de Currículo -->
-                  <div class="form-notice-box">
-                    <strong>Informação sobre Anexos:</strong> A submissão direta de arquivos em anexo (.pdf/.doc) será integrada à nova plataforma digital de R&S em breve. Por enquanto, utilize o campo de LinkedIn e o resumo acima para triagem imediata pela nossa equipe.
+                  <div class="b2b-field">
+                    <label class="b2b-label" for="candidate-curriculo">Currículo (opcional)</label>
+                    <input type="file" id="candidate-curriculo" name="curriculo_file" class="b2b-input" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+                    <small class="b2b-file-help">PDF, DOC ou DOCX de até 10MB. Você também pode enviar apenas o LinkedIn.</small>
                   </div>
 
                   <button type="submit" class="btn btn-primary b2b-submit-btn" id="candidate-submit-btn">

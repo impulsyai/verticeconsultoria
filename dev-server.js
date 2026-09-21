@@ -2,7 +2,7 @@
  * Vértice — Pessoas & Estratégia
  * Servidor Local de Desenvolvimento e Emulação de Vercel Serverless Functions
  *
- * Permite rodar o site localmente e executar /api/lead com roteamento para o Frappe CRM local.
+ * Permite rodar o site localmente e executar /api/lead com roteamento para o Vértice Hub.
  * Uso: node dev-server.js (ou via npm/powershell)
  */
 
@@ -73,15 +73,30 @@ const server = http.createServer(async (req, res) => {
 
   // Roteamento da Serverless Function /api/lead
   if (pathname === '/api/lead') {
-    let rawBody = '';
+    const chunks = [];
+    let bodySize = 0;
+    let bodyTooLarge = false;
     req.on('data', chunk => {
-      rawBody += chunk;
+      bodySize += chunk.length;
+      if (bodySize <= 12 * 1024 * 1024) chunks.push(Buffer.from(chunk));
+      else bodyTooLarge = true;
     });
     req.on('end', async () => {
+      if (bodyTooLarge) {
+        res.status(413).json({ success: false, error: 'payload_too_large' });
+        return;
+      }
+      const rawBody = Buffer.concat(chunks);
+      req.rawBody = rawBody;
+      const contentType = String(req.headers['content-type'] || '').toLowerCase();
       try {
-        req.body = rawBody ? JSON.parse(rawBody) : {};
+        req.body = contentType.includes('application/json') && rawBody.length
+          ? JSON.parse(rawBody.toString('utf8'))
+          : contentType.includes('application/json')
+            ? {}
+            : rawBody;
       } catch (e) {
-        req.body = rawBody;
+        req.body = {};
       }
       try {
         await leadHandler(req, res);
@@ -133,6 +148,6 @@ server.listen(PORT, () => {
   console.log(`====================================================`);
   console.log(`🚀 Servidor Vértice B2B rodando em: http://localhost:${PORT}`);
   console.log(`📡 Endpoint de Lead ativo em: http://localhost:${PORT}/api/lead`);
-  console.log(`🔗 Destino Frappe CRM: ${process.env.FRAPPE_BASE_URL || 'http://localhost:8000'}`);
+  console.log(`🔗 Destino Vértice Hub: ${process.env.HUB_API_URL || 'http://localhost:3000/api/v1/public/site-intake'}`);
   console.log(`====================================================`);
 });

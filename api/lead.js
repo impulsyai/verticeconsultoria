@@ -1,53 +1,39 @@
 /**
  * Vértice — Pessoas & Estratégia
- * Endpoint Server-Side Seguro: POST /api/lead
- * Compatível com Vercel Serverless Functions e Node.js Local Dev Server.
+ * Proxy server-side para a ingestão pública do Vértice Hub.
  *
- * Separação Arquitetural Estrita:
- * - CANDIDATO = Recrutamento / Banco de Talentos (People Foundation / vertice_candidates)
- * - EMPRESA   = Pipeline Comercial Corporativo (Frappe CRM Lead)
- *
- * CANDIDATO NUNCA VIRA CRM LEAD.
+ * O navegador envia os dois formulários para /api/lead. Esta função mantém o
+ * segredo de integração no servidor e encaminha JSON ou multipart/form-data
+ * para o Hub, sem expor credenciais de backend ao site público.
  */
 
-const fs = require('fs');
-const path = require('path');
-
-const ALLOWED_SERVICES = [
-  'Recrutamento & Seleção',
-  'Desenvolvimento de Líderes',
-  'Pesquisa de Clima Organizacional',
-  'Cargos, Salários & Carreiras',
-  'Mapeamento Comportamental',
-  'Outplacement',
-  'Outro'
-];
-
-const EMPLOYEES_MAP = {
-  '50 a 200 colaboradores': '51-200',
-  '+1.000 colaboradores': '1000+'
-};
-
-// Proteção em memória contra flood por IP
-const rateLimitMap = new Map();
+const MAX_BODY_BYTES = 12 * 1024 * 1024;
 const RATE_LIMIT_WINDOW_MS = 60 * 1000;
-const MAX_REQUESTS_PER_WINDOW = parseInt(process.env.RATE_LIMIT_MAX || '30', 10);
+const MAX_REQUESTS_PER_WINDOW = Number.parseInt(process.env.RATE_LIMIT_MAX || '30', 10);
+const rateLimitMap = new Map();
+
+function header(req, name) {
+  const headers = req.headers || {};
+  return headers[name.toLowerCase()] || headers[name] || '';
+}
+
+function clientIp(req) {
+  return String(header(req, 'x-forwarded-for')).split(',')[0].trim() ||
+    String(header(req, 'x-real-ip')).trim() ||
+    'unknown';
+}
 
 function isRateLimited(ip) {
   const now = Date.now();
-  const userRecord = rateLimitMap.get(ip) || [];
-  const validTimestamps = userRecord.filter(ts => now - ts < RATE_LIMIT_WINDOW_MS);
+  const recent = (rateLimitMap.get(ip) || []).filter((timestamp) => now - timestamp < RATE_LIMIT_WINDOW_MS);
+  if (recent.length >= MAX_REQUESTS_PER_WINDOW) return true;
 
-  if (validTimestamps.length >= MAX_REQUESTS_PER_WINDOW) {
-    return true;
-  }
-
-  validTimestamps.push(now);
-  rateLimitMap.set(ip, validTimestamps);
+  recent.push(now);
+  rateLimitMap.set(ip, recent);
 
   if (rateLimitMap.size > 2000) {
     for (const [key, timestamps] of rateLimitMap.entries()) {
-      if (timestamps.every(ts => now - ts >= RATE_LIMIT_WINDOW_MS)) {
+      if (timestamps.every((timestamp) => now - timestamp >= RATE_LIMIT_WINDOW_MS)) {
         rateLimitMap.delete(key);
       }
     }
@@ -56,380 +42,161 @@ function isRateLimited(ip) {
   return false;
 }
 
-// Helper: Normalização de Telefone para formato E.164
-function normalizePhoneE164(rawPhone) {
-  const digits = String(rawPhone || '').replace(/\D/g, '');
-  if (!digits) return '';
-  if (digits.startsWith('55') && (digits.length === 12 || digits.length === 13)) {
-    return `+${digits}`;
-  }
-  if (digits.length === 10 || digits.length === 11) {
-    return `+55${digits}`;
-  }
-  return `+${digits}`;
+function send(res, status, body) {
+  return res.status(status).json(body);
 }
 
-// Helper: Parsing de Cidade / Estado
-function parseCityState(cidadeUf) {
-  const raw = String(cidadeUf || '').trim();
-  if (!raw) return { city: null, state: null };
-  const parts = raw.split(/[\/\-,]/).map(s => s.trim()).filter(Boolean);
-  if (parts.length >= 2) {
-    return {
-      city: parts[0],
-      state: parts[1].toUpperCase().slice(0, 2)
-    };
-  }
-  return { city: raw, state: null };
+function requestBodyObject(req) {
+  if (!req.body || typeof req.body !== 'object' || Buffer.isBuffer(req.body)) return null;
+  if (req.body instanceof Uint8Array) return null;
+  return req.body;
 }
 
-/**
- * Roteamento Especializado: CANDIDATO (Banco de Talentos / People Foundation)
- * Garante que o candidato NUNCA seja gravado em CRM Lead.
- */
-async function handleCandidateSubmission(req, res, body, clientIp, utmData) {
-  const rawName = String(body.nome || body.first_name || '').trim();
-  const rawPhone = String(body.whatsapp || body.mobile_no || '').trim();
-  const rawEmail = String(body.email || '').trim().toLowerCase();
-  const rawArea = String(body.area_atuacao || '').trim();
-  const rawCidadeUf = String(body.cidade_uf || body.cidade || '').trim().slice(0, 100);
-  const rawCargoObj = String(body.cargo_objetivo || body.cargo || '').trim().slice(0, 140);
-  const rawLinkedin = String(body.linkedin || '').trim().slice(0, 250);
-  const rawApresentacao = String(body.mensagem || '').trim().slice(0, 2000);
+async function readRawBody(req) {
+  if (req.rawBody) return Buffer.from(req.rawBody);
+  if (Buffer.isBuffer(req.body)) return req.body;
+  if (req.body instanceof Uint8Array) return Buffer.from(req.body);
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!rawName || rawName.length < 2 || rawName.length > 140) {
-    return res.status(400).json({ success: false, error: 'validation_error', message: 'Nome inválido' });
+  const chunks = [];
+  let size = 0;
+  for await (const chunk of req) {
+    const buffer = Buffer.from(chunk);
+    size += buffer.length;
+    if (size > MAX_BODY_BYTES) throw new Error('payload_too_large');
+    chunks.push(buffer);
   }
-  if (!rawEmail || rawEmail.length > 140 || !emailRegex.test(rawEmail)) {
-    return res.status(400).json({ success: false, error: 'validation_error', message: 'E-mail inválido' });
-  }
-  const phoneDigits = rawPhone.replace(/\D/g, '');
-  if (!rawPhone || phoneDigits.length < 10 || rawPhone.length > 30) {
-    return res.status(400).json({ success: false, error: 'validation_error', message: 'WhatsApp/telefone inválido' });
-  }
-  if (!rawArea || rawArea.length < 2 || rawArea.length > 140) {
-    return res.status(400).json({ success: false, error: 'validation_error', message: 'Área de atuação obrigatória' });
+  return Buffer.concat(chunks);
+}
+
+async function parseMultipart(rawBody, contentType) {
+  if (typeof Request !== 'function' || typeof FormData !== 'function') {
+    throw new Error('multipart_not_supported');
   }
 
-  const phoneE164 = normalizePhoneE164(rawPhone);
-  const { city, state } = parseCityState(rawCidadeUf);
-  const emailNormalized = rawEmail.toLowerCase().trim();
+  const parsed = await new Request('http://site-intake.local', {
+    method: 'POST',
+    headers: { 'content-type': contentType },
+    body: rawBody,
+  }).formData();
 
-  const candidatePayload = {
-    id: `cand_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
-    full_name: rawName,
-    email: rawEmail,
-    email_normalized: emailNormalized,
-    phone: rawPhone,
-    phone_e164: phoneE164,
-    city: city,
-    state: state,
-    area: rawArea,
-    current_job_title: rawCargoObj || null,
-    linkedin_url: rawLinkedin || null,
-    notes: rawApresentacao || null,
-    source: 'site_talentos',
-    status: 'active',
-    utm_source: utmData.utmSource || null,
-    utm_medium: utmData.utmMedium || null,
-    utm_campaign: utmData.utmCampaign || null,
-    utm_content: utmData.utmContent || null,
-    landing_page: utmData.landingPage || null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
+  const honeypot = parsed.get('website_url_hp');
+  if (typeof honeypot === 'string' && honeypot.trim()) {
+    return { honeypot: true, body: null, headers: {} };
+  }
+
+  const forwarded = new FormData();
+  for (const [key, value] of parsed.entries()) {
+    if (typeof value === 'string') forwarded.append(key, value);
+    else forwarded.append(key, value, value.name || 'curriculo');
+  }
+
+  return { honeypot: false, body: forwarded, headers: {} };
+}
+
+async function buildForwardPayload(req) {
+  const contentType = String(header(req, 'content-type')).toLowerCase();
+  if (contentType.startsWith('multipart/form-data')) {
+    const rawBody = await readRawBody(req);
+    if (rawBody.length > MAX_BODY_BYTES) throw new Error('payload_too_large');
+    return parseMultipart(rawBody, header(req, 'content-type'));
+  }
+
+  const objectBody = requestBodyObject(req);
+  if (objectBody) {
+    if (String(objectBody.website_url_hp || '').trim()) return { honeypot: true, body: null, headers: {} };
+    return { honeypot: false, body: JSON.stringify(objectBody), headers: { 'content-type': 'application/json' } };
+  }
+
+  if (typeof req.body === 'string' && contentType.includes('application/json')) {
+    const parsed = JSON.parse(req.body);
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('invalid_json');
+    if (String(parsed.website_url_hp || '').trim()) return { honeypot: true, body: null, headers: {} };
+    return { honeypot: false, body: JSON.stringify(parsed), headers: { 'content-type': 'application/json' } };
+  }
+
+  const rawBody = await readRawBody(req);
+  if (rawBody.length > MAX_BODY_BYTES) throw new Error('payload_too_large');
+  if (!rawBody.length) return { honeypot: false, body: JSON.stringify({}), headers: { 'content-type': 'application/json' } };
+
+  if (contentType.includes('application/json')) {
+    const parsed = JSON.parse(rawBody.toString('utf8'));
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('invalid_json');
+    if (String(parsed.website_url_hp || '').trim()) return { honeypot: true, body: null, headers: {} };
+    return { honeypot: false, body: JSON.stringify(parsed), headers: { 'content-type': 'application/json' } };
+  }
+
+  throw new Error('unsupported_content_type');
+}
+
+function normalizeHubResponse(payload) {
+  const data = payload && typeof payload === 'object' && payload.data ? payload.data : payload;
+  if (data && data.success) return { success: true, ...data };
+
+  const error = payload && typeof payload === 'object' && payload.error;
+  return {
+    success: false,
+    error: typeof error === 'string' ? error : error?.code || 'hub_unavailable',
+    message: typeof error === 'object' ? error.message : payload?.message || 'Não foi possível concluir o envio.',
   };
+}
 
-  // 1. Envio Direto ao People Foundation (Supabase) se variáveis configuradas
-  const supabaseUrl = process.env.SUPABASE_URL || process.env.PEOPLE_API_URL;
-  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+module.exports = async function handler(req, res) {
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', 'POST');
+    return send(res, 405, { success: false, error: 'method_not_allowed' });
+  }
 
-  if (supabaseUrl && supabaseKey) {
+  if (isRateLimited(clientIp(req))) {
+    return send(res, 429, { success: false, error: 'rate_limited', message: 'Tente novamente em alguns instantes.' });
+  }
+
+  const hubUrl = process.env.HUB_API_URL || 'http://localhost:3000/api/v1/public/site-intake';
+  const integrationSecret = String(process.env.SITE_INTAKE_SHARED_SECRET || '').trim();
+  if (!integrationSecret) {
+    console.error('[SITE INTAKE] SITE_INTAKE_SHARED_SECRET não configurado.');
+    return send(res, 503, { success: false, error: 'integration_not_configured' });
+  }
+
+  try {
+    const parsedUrl = new URL(hubUrl);
+    if (!['http:', 'https:'].includes(parsedUrl.protocol)) throw new Error('invalid_hub_url');
+
+    const payload = await buildForwardPayload(req);
+    if (payload.honeypot) return send(res, 200, { success: true, message: 'Recebido.' });
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15_000);
+    let hubResponse;
     try {
-      const restUrl = `${supabaseUrl.replace(/\/$/, '')}/rest/v1/vertice_candidates`;
-      const sResponse = await fetch(restUrl, {
+      hubResponse = await fetch(parsedUrl, {
         method: 'POST',
         headers: {
-          'apikey': supabaseKey,
-          'Authorization': `Bearer ${supabaseKey}`,
-          'Content-Type': 'application/json',
-          'Prefer': 'return=representation,resolution=merge-duplicates'
+          accept: 'application/json',
+          'x-site-intake-secret': integrationSecret,
+          ...payload.headers,
         },
-        body: JSON.stringify(candidatePayload)
+        body: payload.body,
+        signal: controller.signal,
       });
-      if (sResponse.ok) {
-        const sData = await sResponse.json().catch(() => []);
-        console.info('[PEOPLE FOUNDATION]: Candidato persistido no Supabase:', emailNormalized);
-        return res.status(200).json({
-          success: true,
-          tipo: 'candidato',
-          destination: 'vertice_candidates',
-          candidate_id: sData[0]?.id || candidatePayload.id
-        });
-      }
-    } catch (err) {
-      console.warn('[PEOPLE FOUNDATION REST FALHA]:', err.message);
-    }
-  }
-
-  // 2. Persistência Server-Side Segura em Buffer Local (site/data/candidates.jsonl)
-  try {
-    const dataDir = path.join(__dirname, '..', 'data');
-    if (!fs.existsSync(dataDir)) {
-      fs.mkdirSync(dataDir, { recursive: true });
-    }
-    const dataFile = path.join(dataDir, 'candidates.jsonl');
-
-    let existingLines = [];
-    if (fs.existsSync(dataFile)) {
-      existingLines = fs.readFileSync(dataFile, 'utf8')
-        .split('\n')
-        .map(l => l.trim())
-        .filter(Boolean)
-        .map(l => {
-          try { return JSON.parse(l); } catch (e) { return null; }
-        })
-        .filter(Boolean);
+    } finally {
+      clearTimeout(timeout);
     }
 
-    const existingIdx = existingLines.findIndex(c =>
-      (c.email_normalized && c.email_normalized === emailNormalized) ||
-      (c.phone_e164 && c.phone_e164 === phoneE164)
-    );
-
-    if (existingIdx !== -1) {
-      candidatePayload.id = existingLines[existingIdx].id || candidatePayload.id;
-      candidatePayload.created_at = existingLines[existingIdx].created_at || candidatePayload.created_at;
-      existingLines[existingIdx] = candidatePayload;
-      fs.writeFileSync(dataFile, existingLines.map(r => JSON.stringify(r)).join('\n') + '\n', 'utf8');
-      console.info(`[BANCO DE TALENTOS DEDUPE]: Candidato atualizado (ID: ${candidatePayload.id}, email: ${emailNormalized})`);
-    } else {
-      fs.appendFileSync(dataFile, JSON.stringify(candidatePayload) + '\n', 'utf8');
-      console.info(`[BANCO DE TALENTOS NOVO]: Candidato inserido (ID: ${candidatePayload.id}, email: ${emailNormalized})`);
+    const responseBody = await hubResponse.json().catch(() => ({}));
+    const normalized = normalizeHubResponse(responseBody);
+    return send(res, hubResponse.ok ? 200 : hubResponse.status, normalized);
+  } catch (error) {
+    const code = error?.message || 'unknown_error';
+    if (code === 'payload_too_large') {
+      return send(res, 413, { success: false, error: 'payload_too_large', message: 'O arquivo enviado excede o limite permitido.' });
     }
-
-    return res.status(200).json({
-      success: true,
-      tipo: 'candidato',
-      destination: 'banco_de_talentos',
-      candidate_id: candidatePayload.id
-    });
-  } catch (storeErr) {
-    console.error('[ERRO STORAGE CANDIDATO]:', storeErr);
-    return res.status(500).json({
-      success: false,
-      error: 'candidate_storage_error'
-    });
-  }
-}
-
-/**
- * Roteamento Comercial: EMPRESA (B2B Lead Pipeline)
- * Mantém o fluxo comercial para Frappe CRM Lead.
- */
-async function handleEmpresaSubmission(req, res, body, clientIp, utmData) {
-  const rawName = String(body.nome || body.first_name || '').trim();
-  const rawPhone = String(body.whatsapp || body.mobile_no || '').trim();
-  const rawEmail = String(body.email || '').trim().toLowerCase();
-  const rawOrg = String(body.empresa || body.organization || '').trim();
-  const rawJob = String(body.cargo || body.job_title || '').trim();
-  const rawService = String(body.servico || body.service_of_interest || '').trim();
-  const rawPorte = String(body.porte || '').trim();
-  const rawChallenge = String(body.desafio || body.challenge || '').trim();
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!rawName || rawName.length < 2 || rawName.length > 140) {
-    return res.status(400).json({ success: false, error: 'validation_error', message: 'Nome inválido' });
-  }
-  if (!rawEmail || rawEmail.length > 140 || !emailRegex.test(rawEmail)) {
-    return res.status(400).json({ success: false, error: 'validation_error', message: 'E-mail inválido' });
-  }
-  const phoneDigits = rawPhone.replace(/\D/g, '');
-  if (!rawPhone || phoneDigits.length < 10 || rawPhone.length > 30) {
-    return res.status(400).json({ success: false, error: 'validation_error', message: 'WhatsApp/telefone inválido' });
-  }
-  if (!rawOrg || rawOrg.length < 2 || rawOrg.length > 140) {
-    return res.status(400).json({ success: false, error: 'validation_error', message: 'Empresa inválida' });
-  }
-  if (!rawJob || rawJob.length < 2 || rawJob.length > 120) {
-    return res.status(400).json({ success: false, error: 'validation_error', message: 'Cargo inválido' });
-  }
-  if (!rawService || !ALLOWED_SERVICES.includes(rawService)) {
-    return res.status(400).json({ success: false, error: 'validation_error', message: 'Serviço de interesse inválido' });
-  }
-
-  let fullChallenge = rawChallenge.slice(0, 2000);
-  if (rawPorte) {
-    const porteLabel = `[Porte da Organização: ${rawPorte.slice(0, 50)}]`;
-    fullChallenge = fullChallenge ? `${fullChallenge}\n\n${porteLabel}` : porteLabel;
-  }
-
-  const employeesValue = EMPLOYEES_MAP[rawPorte] || null;
-
-  const frappeLeadData = {
-    first_name: rawName,
-    organization: rawOrg,
-    job_title: rawJob,
-    mobile_no: rawPhone,
-    email: rawEmail,
-    service_of_interest: rawService,
-    challenge: fullChallenge,
-    source: 'Site',
-    status: 'NOVO'
-  };
-
-  if (employeesValue) {
-    frappeLeadData.no_of_employees = employeesValue;
-  }
-
-  if (utmData.utmSource) frappeLeadData.utm_source = utmData.utmSource;
-  if (utmData.utmMedium) frappeLeadData.utm_medium = utmData.utmMedium;
-  if (utmData.utmCampaign) frappeLeadData.utm_campaign = utmData.utmCampaign;
-  if (utmData.utmContent) frappeLeadData.utm_content = utmData.utmContent;
-  if (utmData.landingPage) frappeLeadData.landing_page = utmData.landingPage;
-
-  const frappeBaseUrl = (process.env.FRAPPE_BASE_URL || 'http://localhost:8000').replace(/\/$/, '');
-  const frappeApiKey = process.env.FRAPPE_API_KEY;
-  const frappeApiSecret = process.env.FRAPPE_API_SECRET;
-  const frappeHostHeader = process.env.FRAPPE_HOST_HEADER;
-
-  if (!frappeApiKey || !frappeApiSecret) {
-    console.error('[ERRO DE CONFIGURAÇÃO]: Variáveis FRAPPE_API_KEY ou FRAPPE_API_SECRET não definidas no ambiente.');
-    return res.status(500).json({
-      success: false,
-      error: 'crm_unavailable'
-    });
-  }
-
-  const frappeHeaders = {
-    'Authorization': `token ${frappeApiKey}:${frappeApiSecret}`,
-    'Content-Type': 'application/json',
-    'Accept': 'application/json'
-  };
-
-  if (frappeHostHeader) {
-    frappeHeaders['Host'] = frappeHostHeader;
-  }
-
-  const frappeUrl = `${frappeBaseUrl}/api/resource/CRM Lead`;
-
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 12000);
-
-  try {
-    const frappeResponse = await fetch(frappeUrl, {
-      method: 'POST',
-      headers: frappeHeaders,
-      body: JSON.stringify(frappeLeadData),
-      signal: controller.signal
-    });
-
-    clearTimeout(timeoutId);
-
-    if (frappeResponse.status === 200 || frappeResponse.status === 201) {
-      const responseData = await frappeResponse.json();
-      console.info('[FRAPPE CRM SUCESSO]: Lead B2B criado com ID:', responseData?.data?.name || 'sucesso');
-      return res.status(200).json({
-        success: true,
-        tipo: 'empresa',
-        destination: 'crm_lead'
-      });
-    } else {
-      const errorText = await frappeResponse.text();
-      console.error(`[FRAPPE CRM FALHA]: Status ${frappeResponse.status} - Resposta:`, errorText.slice(0, 300));
-      return res.status(502).json({
-        success: false,
-        error: 'crm_unavailable'
-      });
+    if (code === 'invalid_json' || code === 'unsupported_content_type' || code === 'multipart_not_supported') {
+      return send(res, 400, { success: false, error: code });
     }
-  } catch (fetchErr) {
-    clearTimeout(timeoutId);
-    console.error('[ERRO CONEXÃO CRM]:', fetchErr.message);
-    return res.status(502).json({
-      success: false,
-      error: 'crm_unavailable'
-    });
-  }
-}
-
-/**
- * Handler Principal da API
- */
-module.exports = async function handler(req, res) {
-  if (req.method === 'OPTIONS') {
-    return res.status(204).end();
-  }
-
-  if (req.method !== 'POST') {
-    return res.status(405).json({
-      success: false,
-      error: 'method_not_allowed'
-    });
-  }
-
-  try {
-    const clientIp = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() ||
-                     req.headers['x-real-ip'] ||
-                     req.socket?.remoteAddress ||
-                     'unknown';
-
-    if (isRateLimited(clientIp)) {
-      return res.status(429).json({
-        success: false,
-        error: 'too_many_requests'
-      });
+    if (error?.name === 'AbortError') {
+      return send(res, 504, { success: false, error: 'hub_timeout', message: 'O Hub demorou para responder.' });
     }
-
-    let body = req.body;
-    if (typeof body === 'string') {
-      try {
-        body = JSON.parse(body);
-      } catch (parseErr) {
-        return res.status(400).json({
-          success: false,
-          error: 'validation_error'
-        });
-      }
-    }
-
-    if (!body || typeof body !== 'object') {
-      return res.status(400).json({
-        success: false,
-        error: 'validation_error'
-      });
-    }
-
-    // Honeypot Anti-Spam
-    if (body.website_url_hp || body.hp_field || body.website_hp) {
-      console.warn('[ANTI-SPAM] Submissão bloqueada por honeypot:', clientIp);
-      return res.status(400).json({
-        success: false,
-        error: 'validation_error'
-      });
-    }
-
-    const utmData = {
-      utmSource: String(body.utm_source || '').trim().slice(0, 140),
-      utmMedium: String(body.utm_medium || '').trim().slice(0, 140),
-      utmCampaign: String(body.utm_campaign || '').trim().slice(0, 140),
-      utmContent: String(body.utm_content || '').trim().slice(0, 140),
-      landingPage: String(body.landing_page || body.page_url || '').trim().slice(0, 500)
-    };
-
-    const tipo = String(body.tipo || 'empresa').trim().toLowerCase();
-
-    // ROTEAMENTO ESTRITO: CANDIDATO vs EMPRESA
-    if (tipo === 'candidato') {
-      return await handleCandidateSubmission(req, res, body, clientIp, utmData);
-    } else {
-      return await handleEmpresaSubmission(req, res, body, clientIp, utmData);
-    }
-
-  } catch (err) {
-    console.error('[ERRO INESPERADO /api/lead]:', err.message || err);
-    return res.status(502).json({
-      success: false,
-      error: 'crm_unavailable'
-    });
+    console.error('[SITE INTAKE] Falha ao encaminhar para o Hub:', error);
+    return send(res, 502, { success: false, error: 'hub_unavailable', message: 'Não foi possível conectar ao Hub.' });
   }
 };
